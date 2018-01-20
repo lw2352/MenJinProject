@@ -8,7 +8,7 @@
 *.elf
 
 #keil output
-/Flash/
+/Project/MDK-ARM(uV4)/Flash/
 
 # Linker output
 *.ilk
