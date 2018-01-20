@@ -41,8 +41,11 @@ DoorStatus_T g_tDoorStatus;
 #define GPIO_PORT_LED3  GPIOB
 #define GPIO_PIN_LED3	GPIO_Pin_8//sysStatus
 
-//#define GPIO_PORT_LED4  GPIOD
-//#define GPIO_PIN_LED4	GPIO_Pin_2
+#define GPIO_PORT_ALARM  GPIOC
+#define GPIO_PIN_ALARM_LED1	    GPIO_Pin_0
+#define GPIO_PIN_ALARM_BEEP1	GPIO_Pin_1
+#define GPIO_PIN_ALARM_LED2	    GPIO_Pin_2
+#define GPIO_PIN_ALARM_BEEP2	GPIO_Pin_3
 
 #define GPIO_PORT_FB1  GPIOC
 #define GPIO_PIN_FB1	GPIO_Pin_11//fb1
@@ -94,8 +97,9 @@ void bsp_InitLed(void)
 	GPIO_InitStructure.GPIO_Pin = GPIO_PIN_LED3;
 	GPIO_Init(GPIO_PORT_LED3, &GPIO_InitStructure);
 
-//	GPIO_InitStructure.GPIO_Pin = GPIO_PIN_LED4;
-//	GPIO_Init(GPIO_PORT_LED4, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = GPIO_PIN_ALARM_LED1 | GPIO_PIN_ALARM_BEEP1 | GPIO_PIN_ALARM_LED2 | GPIO_PIN_ALARM_BEEP2;
+	GPIO_Init(GPIO_PORT_ALARM, &GPIO_InitStructure);
+    
 
 //两根门吸反馈线
     GPIO_InitStructure.GPIO_Pin  = GPIO_PIN_FB1;
@@ -346,6 +350,46 @@ static void readFeedBack(void)
         g_tDoorStatus.doorB.feedBackStatus = NC;
     }
     else g_tDoorStatus.doorB.feedBackStatus = NO;
+}
+
+//打开报警
+void alarmOn(enum ReaderOrButton_Enum type)
+{
+    switch(type)
+    {
+        case e_READER_A:
+            GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置低电平
+            GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP1);
+            break;
+        
+        case e_READER_B:
+            GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置低电平
+            GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP2);
+            break;
+                
+        default:
+            break;
+    }
+}
+
+//关闭报警
+void alarmOff(enum ReaderOrButton_Enum type)
+{
+    switch(type)
+    {
+        case e_READER_A:
+            GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置高电平
+            GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP1);
+            break;
+        
+        case e_READER_B:
+            GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置高电平
+            GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP2);
+            break;
+                
+        default:
+            break;
+    }
 }
 
 /***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

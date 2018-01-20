@@ -29,8 +29,8 @@ typedef struct
     SingleDoor_T doorA;//读头A
     SingleDoor_T doorB;//读头B
     void (*readFeedBack)(void);//读取门吸反馈，结果存入结构体
-    void (*openDoor)(SingleRelation_T *singleRelation, enum ReaderOrButton openWay);//传进来的是读头A/按键A或者B的对应关系
-    void (*closeDoor)(SingleRelation_T *singleRelation, enum ReaderOrButton openWay);
+    void (*openDoor)(SingleRelation_T *singleRelation, enum ReaderOrButton_Enum openWay);//传进来的是读头A/按键A或者B的对应关系
+    void (*closeDoor)(SingleRelation_T *singleRelation, enum ReaderOrButton_Enum openWay);
 }DoorStatus_T;
 
 
@@ -42,6 +42,9 @@ void bsp_InitLed(void);
 void bsp_LedOn(uint8_t _no);
 void bsp_LedOff(uint8_t _no);
 void bsp_LedToggle(uint8_t _no);//结合毫秒延时可以用来使系统状态灯闪烁
+
+void alarmOn(enum ReaderOrButton_Enum type);
+void alarmOff(enum ReaderOrButton_Enum type);
 #endif
 
 /***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

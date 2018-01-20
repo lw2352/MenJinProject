@@ -61,7 +61,7 @@ typedef struct
 {
     uint8_t remoteOpen;//远程开门，低4位为1开a门，高4位为1开b门
     uint8_t firstCardStatus;//写1表示首卡已经来了，写0表示必须等待
-    uint16_t multipleCardStatus;//16位，每一位表示一张卡，1表示刷了，0表示没有刷
+    uint16_t multipleCardStatus;//表示刷卡数
     uint8_t time[5];//时间
 }RunInfo_T;
 
@@ -89,12 +89,17 @@ enum ReaderOrButton_Enum
 enum ID_Enum
 {
     e_firstCardID,
+    
     e_superCardID,
     e_superPasswordID,
+    
     e_threatCardID,
     e_threatPasswordID,
+    
     e_keyBoardID,
+    
     e_multipleCardID,
+
     e_generalCardID,
     e_fingerID
 };

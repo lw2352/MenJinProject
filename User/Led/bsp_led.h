@@ -42,6 +42,9 @@ void bsp_InitLed(void);
 void bsp_LedOn(uint8_t _no);
 void bsp_LedOff(uint8_t _no);
 void bsp_LedToggle(uint8_t _no);//结合毫秒延时可以用来使系统状态灯闪烁
+
+void alarmOn(enum ReaderOrButton_Enum type);
+void alarmOff(enum ReaderOrButton_Enum type);
 #endif
 
 /***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/
