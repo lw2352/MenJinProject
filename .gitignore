@@ -7,6 +7,9 @@
 *.obj
 *.elf
 
+#keil output
+/Flash/
+
 # Linker output
 *.ilk
 *.map
