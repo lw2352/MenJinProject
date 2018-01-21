@@ -3,7 +3,10 @@
 *
 *	模块名称 : 主程序模块。
 *	文件名称 : main.c(任务的优先级数值越小优先级越低，这个跟uCOS相反)
-*   AppTaskReader：读头事件处理，优先级N（最高）
+*   AppTaskReader：读头事件处理，优先级7（最高）
+*   AppTaskFirst：首卡事件处理，优先级6
+*   AppTaskMulti：多重卡事件处理，优先级5
+*   AppTaskInterLock：互锁事件处理，优先级4
 *   AppTaskButton：按键事件处理，优先级3
 *   AppTaskNet：网络任务、按键扫描，优先级2
 *   AppTaskStart:心跳包和喂狗等，优先级1（最低）
@@ -65,6 +68,7 @@ os_mbx_declare (mailboxCardInterLock, 8);
 /* 定时器句柄 */
 OS_ID  OneTimerA;//操作继电器A
 OS_ID  OneTimerB;//操作继电器B
+
 /*
 *********************************************************************************************************
 *	函 数 名: main
@@ -79,7 +83,7 @@ int main(void)
 	bsp_Init();
 	
 	/* 创建启动任务 */
- 	os_sys_init_user (AppTaskStart,             /* 任务函数 */
+ 	os_sys_init_user(AppTaskStart,             /* 任务函数 */
 	                  1,                        /* 任务优先级 */
 	                  &AppTaskStartStk,         /* 任务栈 */
 	                  sizeof(AppTaskStartStk)); /* 任务栈大小，单位字节数 */
@@ -91,7 +95,7 @@ int main(void)
 *********************************************************************************************************
 *	函 数 名: AppTaskReader
 *	主要功能: 处理按键开门和远程开门事件
-*   优 先 级: 最高 
+*   优 先 级: 最高 ,7
 *   间隔时间: 无
 *********************************************************************************************************
 */
@@ -120,15 +124,15 @@ __task void AppTaskReader(void)
         {
             if(g_tParam.systemCfg.multipleOpenCfg[1] == 1)//首卡已启用
             {
-                os_mbx_send (&mailboxCardFirst, readerMsg, 100);//向消息邮箱发数据，如果消息邮箱满了，等待100个时钟节拍
+                os_mbx_send(&mailboxCardFirst, readerMsg, 100);//向消息邮箱发数据，如果消息邮箱满了，等待100个时钟节拍
             }
             if(g_tParam.systemCfg.multipleOpenCfg[2] == 1)//多重卡已启用
             {
-                os_mbx_send (&mailboxCardMulti, readerMsg, 100);//向消息邮箱发数据，如果消息邮箱满了，等待100个时钟节拍
+                os_mbx_send(&mailboxCardMulti, readerMsg, 100);//向消息邮箱发数据，如果消息邮箱满了，等待100个时钟节拍
             }
             if(g_tParam.systemCfg.multipleOpenCfg[0] == 1)//互锁已启用
             {
-                os_mbx_send (&mailboxCardInterLock, readerMsg, 100);//向消息邮箱发数据，如果消息邮箱满了，等待100个时钟节拍
+                os_mbx_send(&mailboxCardInterLock, readerMsg, 100);//向消息邮箱发数据，如果消息邮箱满了，等待100个时钟节拍
             }
             //处理超级卡、码和胁迫卡、码
             switch(readerMsg->readerID)
@@ -194,6 +198,7 @@ __task void AppTaskReader(void)
 }
 
 //处理首卡的任务
+//优先级：6
 __task void AppTaskFirst(void)
 {
     uint8_t type;
@@ -262,6 +267,7 @@ __task void AppTaskFirst(void)
 }
 
 //处理多重卡的任务
+//优先级：5
 __task void AppTaskMulti(void)
 {
     uint8_t type;
@@ -329,6 +335,7 @@ __task void AppTaskMulti(void)
 
 
 //处理互锁的任务
+//优先级：4
 __task void AppTaskInterLock(void)
 {
     uint8_t type;
@@ -593,22 +600,22 @@ __task void AppTaskStart(void)
 static void AppTaskCreate (void)
 {
     HandleTaskReader = os_tsk_create_user(AppTaskReader,              /* 任务函数 */ 
-                                       4,                       /* 任务优先级 */ 
+                                       7,                       /* 任务优先级 */ 
                                        &AppTaskReaderStk,          /* 任务栈 */
                                        sizeof(AppTaskReaderStk));  /* 任务栈大小，单位字节数 */
     
     HandleTaskFirst = os_tsk_create_user(AppTaskFirst,              /* 任务函数 */ 
-                                       4,                       /* 任务优先级 */ 
+                                       6,                       /* 任务优先级 */ 
                                        &AppTaskFirstStk,          /* 任务栈 */
                                        sizeof(AppTaskFirstStk));  /* 任务栈大小，单位字节数 */
     
     HandleTaskMulti = os_tsk_create_user(AppTaskMulti,              /* 任务函数 */ 
-	                                   3,                       /* 任务优先级 */ 
+	                                   5,                       /* 任务优先级 */ 
 	                                   &AppTaskMultiStk,          /* 任务栈 */
 	                                   sizeof(AppTaskMultiStk));  /* 任务栈大小，单位字节数 */
     
 	HandleTaskInterLock = os_tsk_create_user(AppTaskInterLock,              /* 任务函数 */ 
-	                                   2,                       /* 任务优先级 */ 
+	                                   4,                       /* 任务优先级 */ 
 	                                   &AppTaskInterLockStk,          /* 任务栈 */
 	                                   sizeof(AppTaskInterLockStk));  /* 任务栈大小，单位字节数 */
     
