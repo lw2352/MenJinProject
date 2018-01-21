@@ -584,6 +584,8 @@ void processCommand(uint8_t *data, uint16_t len)
     case 0x21://重启（并升级）
         ret = 0x55;
         SendDataToServer(data[2], 1, &ret, 1);
+        //改写升级标志
+        ee_WriteOneBytes(1, 0);//1表示需要升级,0表示在iic的首地址
         //关门放狗
         bsp_DelayMS(25000);//25>20
         break;
