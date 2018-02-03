@@ -10,6 +10,7 @@ static uint8_t writeAddr[5]={0x8c, 0x88, 0x86, 0x84, 0x82};//Ğ´Äê¡¢ÔÂ¡¢ÈÕ¡¢Ê±¡¢·
 static void write_1302byte(uint8_t dat);//Ğ´Ò»¸ö×Ö½ÚµÄÊı¾İsckÉÏÉıÑØĞ´Êı¾İ
 static uint8_t read_1302(uint8_t add);//¶ÁÊı¾İ
 static void write_1302(uint8_t add,uint8_t dat);//ÏòÖ¸¶¨¼Ä´æÆ÷Ğ´ÈëÒ»¸ö×Ö½ÚµÄÊı¾İ
+static void checkTime(void);
 /*PA4.6ÎªÊä³ö*/
 /*PA5ÅäÖÃÎª¿ªÂ©Ä£Ê½£¬´ËÄ£Ê½ÏÂÄÜ¹»ÊµÏÖÕæÕıµÄË«ÏòIO¿Ú*/
 void ds1302_GPIO_Configuration(void)
@@ -27,9 +28,7 @@ void ds1302_GPIO_Configuration(void)
   GPIO_InitStruct.GPIO_Pin = ds1302dat;
   GPIO_Init(DS1302_PORT, &GPIO_InitStruct);
     
-//  write_1302(0x8e,0x00);//È¥³ıĞ´±£»¤
-//  write_1302(0x80, 0);
-//  write_1302(0x8e,0x80);//¼ÓĞ´±£»¤
+  checkTime();
 }
 
 void write_1302byte(uint8_t dat)//Ğ´Ò»¸ö×Ö½ÚµÄÊı¾İsckÉÏÉıÑØĞ´Êı¾İ
@@ -137,5 +136,16 @@ void ds1302_readtime(uint8_t *time, uint8_t len)//´¦ÀíÊı¾İ²¢Í¨¹ı´®¿Ú´òÓ¡
 //    printf("20%d%dÄê%d%dÔÂ%d%dÈÕ%d%d:%d%d:%d%d ĞÇÆÚ%d\r\n",\
 //      time[6],g[6],time[4],g[4],time[3],g[3],time[2],g[2],time[1],g[1],time[0],g[0],g[5]);
 //  s=time[0]+g[0];	
+}
+
+//¼ì²éÊ±¼ä£¬Èôµç³ØÃ»µç£¬ÄêÎª0£¬ÔòĞ´¼Ä´æÆ÷
+static void checkTime()
+{
+    uint8_t time[5];
+    ds1302_readtime(time, 5);
+    if(time[0] < 18)//¸´Î»ºó¶Áµ½µÄÄêÎª1
+    {
+        write_1302(0x80, 0);
+    }
 }
 

@@ -22,7 +22,7 @@ static void AppTaskCreate (void);//创建除start任务外的其他任务
 static void AppObjCreate (void);//用来初始化邮箱和软件定时器
 
 static void ReaderAlarm(enum ReaderOrButton_Enum type);//读头报警
-
+static void SysLed(void);//系统状态灯闪烁
 //任务函数
 __task void AppTaskReader(void);
 
@@ -82,7 +82,7 @@ OS_ID  OneTimerB;//操作继电器B
 int main(void) 
 {	
     uint8_t temp[3];
-    uint8_t in[5] = {0x11, 0x0B, 0x03, 0x0A, 0x06};
+//    uint8_t in[5] = {0x11, 0x0B, 0x03, 0x0A, 0x06};
 	/* 初始化外设 */
 	bsp_Init();
 	
@@ -117,7 +117,7 @@ __task void AppTaskReader(void)
 {
     uint8_t type;
     SingleReader_T *readerMsg;
-    const uint16_t usMaxBlockTime = 2000; /* 延迟周期 */
+    const uint16_t usMaxBlockTime = 200; /* 延迟周期 */
     while(1)
     {
         //最重要的部分
@@ -137,6 +137,8 @@ __task void AppTaskReader(void)
         
         if(os_mbx_wait(&mailboxCardRX, (void *)&readerMsg, usMaxBlockTime) != OS_R_TMO)
         {
+            SysLed();
+            
             if(g_tParam.systemCfg.multipleOpenCfg[1] == 1)//首卡已启用
             {
                 os_mbx_send(&mailboxCardFirst, readerMsg, 100);//向消息邮箱发数据，如果消息邮箱满了，等待100个时钟节拍
@@ -202,18 +204,36 @@ __task void AppTaskReader(void)
 
                     if(type == e_superCardID || type == e_superPasswordID)//超级卡或超级密码随便开
                     {
-                        g_tDoorStatus.openDoor(&g_tParam.relation.relationA, e_READER_A);
-                        OneTimerA = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);
+                        g_tDoorStatus.openDoor(&g_tParam.relation.relationB, e_READER_B);
+                        OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);
                     }
                     if(type == e_threatCardID || type == e_threatPasswordID)//胁迫卡和胁迫码
                     {
-                        g_tDoorStatus.openDoor(&g_tParam.relation.relationA, e_READER_A);
+                        g_tDoorStatus.openDoor(&g_tParam.relation.relationB, e_READER_B);
                         OneTimerA = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);
                         
                         //存储记录到spi
-                        storeRecord(readerMsg->ID, e_READER_A);
+                        storeRecord(readerMsg->ID, e_READER_B);
                         
-                        SendDataToServer(0x22, 0, g_tReader.readerA.ID, 3);//上传报警消息
+                        SendDataToServer(0x22, 0, g_tReader.readerB.ID, 3);//上传报警消息
+                    }
+                    if(type==e_keyBoardID || type==e_generalCardID || type==e_fingerID)
+                    {
+                        if(g_tDoorStatus.doorB.switcherStatus == NC)
+                        {
+                            g_tDoorStatus.openDoor(&g_tParam.relation.relationB, e_READER_B);
+                            OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);
+                            
+                            //存储记录到spi
+                            storeRecord(readerMsg->ID, e_READER_B);
+                            //把卡号上传到服务器
+                            SendDataToServer(0x06, 0, g_tReader.readerB.ID, 3);
+                        }
+                    }
+                    if(type == 0xFF)
+                    {
+                        //把卡号上传到服务器
+                        SendDataToServer(0x06, 0, g_tReader.readerB.ID, 3);
                     }
                     break;
                     
@@ -232,9 +252,10 @@ __task void AppTaskFirst(void)
 {
     uint8_t type;
     SingleReader_T *readerMsg;
+    const uint16_t usMaxBlockTime = 200; /* 延迟周期 */
     while(1)
     {
-        if(os_mbx_wait(&mailboxCardFirst, (void *)&readerMsg, 0xFFFF) != OS_R_TMO)
+        if(os_mbx_wait(&mailboxCardFirst, (void *)&readerMsg, usMaxBlockTime) != OS_R_TMO)
         {
             switch(readerMsg->readerID)
             {
@@ -301,9 +322,10 @@ __task void AppTaskMulti(void)
 {
     uint8_t type;
     SingleReader_T *readerMsg;
+    const uint16_t usMaxBlockTime = 200; /* 延迟周期 */
     while(1)
     {
-        if(os_mbx_wait(&mailboxCardMulti, (void *)&readerMsg, 0xFFFF) != OS_R_TMO)
+        if(os_mbx_wait(&mailboxCardMulti, (void *)&readerMsg, usMaxBlockTime) != OS_R_TMO)
         {
             switch(readerMsg->readerID)
             {
@@ -369,9 +391,10 @@ __task void AppTaskInterLock(void)
 {
     uint8_t type;
     SingleReader_T *readerMsg;
+    const uint16_t usMaxBlockTime = 200; /* 延迟周期 */
     while(1)
     {
-        if(os_mbx_wait(&mailboxCardInterLock, (void *)&readerMsg, 0xFFFF) != OS_R_TMO)
+        if(os_mbx_wait(&mailboxCardInterLock, (void *)&readerMsg, usMaxBlockTime) != OS_R_TMO)
         {
             switch(readerMsg->readerID)
             {
@@ -438,7 +461,8 @@ __task void AppTaskButton(void)
         if(os_evt_wait_or(BIT_ALL, 0xFFFF) == OS_R_EVT)
         {
             ret_flags = os_evt_get();//返回值为对应的bit
-            BSP_Printf("按键开门\r\n");
+            SysLed();
+            
             switch(ret_flags)
             {
                 case REMOTE_OPEN_BIT://远程开门,套用按键开门方式
@@ -580,8 +604,7 @@ __task void AppTaskNet(void)
 */
 __task void AppTaskStart(void)
 {
-    uint8_t data=0;
-    uint8_t time[6];
+    uint8_t data;
     /* 获取启动任务的句柄 */
 	HandleTaskStart = os_tsk_self();
     //通过start任务间接地创建其他任务
@@ -605,9 +628,8 @@ __task void AppTaskStart(void)
         }
  
         //翻转系统状态灯
-//        bsp_LedToggle(3);
-//        os_dly_wait(100);
-//        bsp_LedToggle(3);
+        SysLed();
+        
         //读取网络状态
         wiz_read_buf(PHYCFGR, &data, 1);//读取phy，判断网线是否插好
         if(data & 0x01 == 1)
@@ -689,6 +711,14 @@ static void ReaderAlarm(enum ReaderOrButton_Enum type)
     alarmOn(type);
     os_dly_wait(200);
     alarmOff(type);
+}
+
+//系统状态灯闪烁
+static void SysLed(void)
+{
+    bsp_LedToggle(3);
+    os_dly_wait(200);
+    bsp_LedToggle(3);
 }
 
 /***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/
