@@ -550,14 +550,14 @@ void processCommand(uint8_t *data, uint16_t len)
         break;
         
     case 0x1E://升级文件
-        //读写位用来表示第几包
-        if(data[7] < 64)//spi分配前256k字节,(0--63)
+        //length第2位用来表示第几包
+        if(data[9] < 64)//spi分配前256k字节,(0--63)
         {
-            if(data[7]%4 == 0)
+            if(data[9]%4 == 0)
             {
-                sf_EraseSector(data[7]*1024);//扇区擦除4k字节
+                sf_EraseSector(data[9]*1024);//扇区擦除4k字节
             }
-            sf_PageWrite(&data[10], data[7]*1024, 1024);//按照每包1024字节大小顺序写入spi flash
+            sf_PageWrite(&data[10], data[9]*1024, 1024);//按照每包1024字节大小顺序写入spi flash
             ret = 0x55;
             SendDataToServer(data[2], 1, &ret, 1);
         }
@@ -588,6 +588,21 @@ void processCommand(uint8_t *data, uint16_t len)
         ee_WriteOneBytes(1, 0);//1表示需要升级,0表示在iic的首地址
         //关门放狗
         bsp_DelayMS(25000);//25>20
+        break;
+    
+    //0x22作为报警消息
+    case 0x23://历史记录
+        //length两位作为第几包
+        if(((data[8]<<8) + data[9]) > (g_tSF.TotalSize/1024 - 256))
+        {
+            ret = 0xAA;
+            SendDataToServer(data[2], 0, &ret, 1);
+        }
+        else
+        {
+            sf_ReadBuffer(&data[10], ((data[8]<<8) + data[9] + 256)*1024, 1024);//读spi的数据
+            SendDataToServer(data[2], 0, &data[10], 1024);
+        }
         break;
                       
     default:

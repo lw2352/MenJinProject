@@ -78,7 +78,7 @@ void bsp_InitLed(void)
 		由于将GPIO设置为输出时，GPIO输出寄存器的值缺省是0，因此会驱动LED点亮.
 		这是我不希望的，因此在改变GPIO为输出前，先关闭LED指示灯
 	*/
-    //初始状态
+    //初始状态为关闭
 	bsp_LedOff(1);//继电器out1
     g_tDoorStatus.doorA.switcherStatus = NC;
 	bsp_LedOff(2);//继电器out2
@@ -340,7 +340,7 @@ static void readFeedBack(void)
 {
     if(READ_FB1 == 0)//0表示低电平
     {
-        //TODO:(门吸反馈的电平表示常开还是常闭待定)
+        //门吸反馈的低电平表示常闭NC
         g_tDoorStatus.doorA.feedBackStatus = NC;
     }
     else g_tDoorStatus.doorA.feedBackStatus = NO;
@@ -352,8 +352,9 @@ static void readFeedBack(void)
     else g_tDoorStatus.doorB.feedBackStatus = NO;
 }
 
-//打开报警
-void alarmOn(enum ReaderOrButton_Enum type)
+
+//关闭报警
+void alarmOff(enum ReaderOrButton_Enum type)
 {
     switch(type)
     {
@@ -372,8 +373,8 @@ void alarmOn(enum ReaderOrButton_Enum type)
     }
 }
 
-//关闭报警
-void alarmOff(enum ReaderOrButton_Enum type)
+//打开报警
+void alarmOn(enum ReaderOrButton_Enum type)
 {
     switch(type)
     {

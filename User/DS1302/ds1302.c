@@ -4,6 +4,9 @@
 static uint8_t readAddr[5]={0x8d, 0x89, 0x87, 0x85, 0x83};//读年、月、日、时、分的寄存器地址
 static uint8_t writeAddr[5]={0x8c, 0x88, 0x86, 0x84, 0x82};//写年、月、日、时、分的寄存器地址
 
+//uint8_t readAddr[]={0x81,0x83,0x85,0x87,0x89,0x8d};//读秒、分、时、日、月、周、年的寄存器地址
+//uint8_t writeAddr[]={0x80,0x82,0x84,0x86,0x88,0x8c};//写秒、分、时、日、月、周、年的寄存器地址
+
 static void write_1302byte(uint8_t dat);//写一个字节的数据sck上升沿写数据
 static uint8_t read_1302(uint8_t add);//读数据
 static void write_1302(uint8_t add,uint8_t dat);//向指定寄存器写入一个字节的数据
@@ -12,7 +15,9 @@ static void write_1302(uint8_t add,uint8_t dat);//向指定寄存器写入一个字节的数据
 void ds1302_GPIO_Configuration(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct;
-  
+  /* 打开GPIO时钟 */
+   //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);//LED程序中提前初始化好了
+    
   GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_InitStruct.GPIO_Pin = ds1302clk|ds1302rst;
   GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
@@ -21,7 +26,10 @@ void ds1302_GPIO_Configuration(void)
   GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_OD;
   GPIO_InitStruct.GPIO_Pin = ds1302dat;
   GPIO_Init(DS1302_PORT, &GPIO_InitStruct);
-  
+    
+//  write_1302(0x8e,0x00);//去除写保护
+//  write_1302(0x80, 0);
+//  write_1302(0x8e,0x80);//加写保护
 }
 
 void write_1302byte(uint8_t dat)//写一个字节的数据sck上升沿写数据

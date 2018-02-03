@@ -4,7 +4,7 @@ static void OpenWiegandDelayTimerA(void);
 static void HandlDelayTimerA(void);
 static void OpenWiegandDelayTimerB(void);
 static void HandlDelayTimerB(void);
-static void DetectReader(void);
+
 static uint8_t DataCheck(SingleReader_T *reader);
 
 Reader_T g_tReader;
@@ -322,7 +322,7 @@ static void HandlDelayTimerB(void)
 }
 
 //检测读头是否连接
-static void DetectReader(void)
+void DetectReader(void)
 {
     if((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == 1)\
         && (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) == 1))//读取readerA

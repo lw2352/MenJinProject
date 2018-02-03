@@ -22,7 +22,7 @@
 #define DISABLE_INT()	__set_PRIMASK(1)	/* 禁止全局中断 */
 
 /* 这个宏仅用于调试阶段排错 */
-//#define BSP_Printf		printf
+#define BSP_Printf		printf
 //#define BSP_Printf(...)//关闭printf
 #define DEBUG		comSendBuf//input:(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen)
 

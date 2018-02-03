@@ -21,6 +21,8 @@
 static void AppTaskCreate (void);//创建除start任务外的其他任务
 static void AppObjCreate (void);//用来初始化邮箱和软件定时器
 
+static void ReaderAlarm(enum ReaderOrButton_Enum type);//读头报警
+
 //任务函数
 __task void AppTaskReader(void);
 
@@ -79,9 +81,21 @@ OS_ID  OneTimerB;//操作继电器B
 */
 int main(void) 
 {	
+    uint8_t temp[3];
+    uint8_t in[5] = {0x11, 0x0B, 0x03, 0x0A, 0x06};
 	/* 初始化外设 */
 	bsp_Init();
 	
+    #if 1 
+    temp[0]=0x79;
+    temp[1]=0xA3;
+    temp[2]=0x8E;
+    memcpy(&g_tParam.multipleCardID.generalCardID[0], temp, sizeof(temp));
+    
+    
+    //ds1302_settime(in, 5);
+    #endif
+    
 	/* 创建启动任务 */
  	os_sys_init_user(AppTaskStart,             /* 任务函数 */
 	                  1,                        /* 任务优先级 */
@@ -103,6 +117,7 @@ __task void AppTaskReader(void)
 {
     uint8_t type;
     SingleReader_T *readerMsg;
+    const uint16_t usMaxBlockTime = 2000; /* 延迟周期 */
     while(1)
     {
         //最重要的部分
@@ -120,7 +135,7 @@ __task void AppTaskReader(void)
 //        if(type 为超级卡/码或胁迫卡/码)
 //        {判断AB读头和AB继电器后，开门或报警}
         
-        if(os_mbx_wait(&mailboxCardRX, (void *)&readerMsg, 0xFFFF) != OS_R_TMO)
+        if(os_mbx_wait(&mailboxCardRX, (void *)&readerMsg, usMaxBlockTime) != OS_R_TMO)
         {
             if(g_tParam.systemCfg.multipleOpenCfg[1] == 1)//首卡已启用
             {
@@ -161,6 +176,24 @@ __task void AppTaskReader(void)
                         
                         SendDataToServer(0x22, 0, g_tReader.readerA.ID, 3);//上传报警消息
                     }
+                    if(type==e_keyBoardID || type==e_generalCardID || type==e_fingerID)
+                    {
+                        if(g_tDoorStatus.doorA.switcherStatus == NC)
+                        {
+                            g_tDoorStatus.openDoor(&g_tParam.relation.relationA, e_READER_A);
+                            OneTimerA = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);
+                            
+                            //存储记录到spi
+                            storeRecord(readerMsg->ID, e_READER_A);
+                            //把卡号上传到服务器
+                            SendDataToServer(0x06, 0, g_tReader.readerA.ID, 3);
+                        }
+                    }
+                    if(type == 0xFF)
+                    {
+                        //把卡号上传到服务器
+                        SendDataToServer(0x06, 0, g_tReader.readerA.ID, 3);
+                    }
                     break;
                 
                 case e_READER_B:
@@ -182,12 +215,8 @@ __task void AppTaskReader(void)
                         
                         SendDataToServer(0x22, 0, g_tReader.readerA.ID, 3);//上传报警消息
                     }
-
-                    //存储记录到spi
-                    storeRecord(readerMsg->ID, e_READER_A);
-                    //把卡号上传到服务器
-                    SendDataToServer(0x06, 0, g_tReader.readerA.ID, 3);
                     break;
+                    
                 
                 default:
                     break;
@@ -409,7 +438,7 @@ __task void AppTaskButton(void)
         if(os_evt_wait_or(BIT_ALL, 0xFFFF) == OS_R_EVT)
         {
             ret_flags = os_evt_get();//返回值为对应的bit
-        
+            BSP_Printf("按键开门\r\n");
             switch(ret_flags)
             {
                 case REMOTE_OPEN_BIT://远程开门,套用按键开门方式
@@ -458,6 +487,7 @@ __task void AppTaskNet(void)
     while(1)
     {
         KEY_Scan();//按键检测
+        DetectReader();//检测读头连接状态
         g_tDoorStatus.readFeedBack();//读取门吸反馈
         //如果门反馈是开的且继电器是关的，那么N秒后调用报警，直到状态对
         //根据检测到的读头状态来，可能有未连接的，只对已连上的报警
@@ -466,6 +496,7 @@ __task void AppTaskNet(void)
             if(g_tDoorStatus.doorA.feedBackStatus == NO && g_tDoorStatus.doorA.switcherStatus == NC)
             {
                 timesA++;
+                
                 if(timesA >= g_tParam.systemCfg.waitTime*10)
                 {
                     if(timesA == g_tParam.systemCfg.waitTime*10*25)
@@ -474,12 +505,13 @@ __task void AppTaskNet(void)
                     }
                     //alram报警，os_dly和翻转
                     //利用读头上的蜂鸣器和led
-                    alarmOn(e_READER_A);
-                    os_dly_wait(100);
-                    alarmOff(e_READER_A);
+                    ReaderAlarm(e_READER_A);
                 }
             }
-            else timesA = 0;
+            else 
+            {
+                timesA = 0;
+            }
         }
         
         if(g_tReader.readerB.status == 1)
@@ -495,12 +527,13 @@ __task void AppTaskNet(void)
                     }
                     //alram报警，os_dly和翻转
                     //利用读头上的蜂鸣器和led
-                    alarmOn(e_READER_B);
-                    os_dly_wait(100);
-                    alarmOff(e_READER_B);
+                    ReaderAlarm(e_READER_B);
                 }
             }
-            else timesB = 0;
+            else 
+            {
+                timesB = 0;
+            }
         }
         
         if(g_tNetData.status == e_Link)
@@ -548,7 +581,7 @@ __task void AppTaskNet(void)
 __task void AppTaskStart(void)
 {
     uint8_t data=0;
-    
+    uint8_t time[6];
     /* 获取启动任务的句柄 */
 	HandleTaskStart = os_tsk_self();
     //通过start任务间接地创建其他任务
@@ -558,9 +591,11 @@ __task void AppTaskStart(void)
 	
     while(1)
     {
-        IWDG_Feed();//喂狗
+        //IWDG_Feed();//喂狗
         
         ds1302_readtime(g_tRunInfo.time, 5);//读取时间
+        DEBUG(COM1, g_tRunInfo.time, 5);
+
         //判断是否到0点，需要复位首卡或者多重卡的状态
         if(g_tRunInfo.time[3] == 0)
         {
@@ -570,9 +605,9 @@ __task void AppTaskStart(void)
         }
  
         //翻转系统状态灯
-        bsp_LedToggle(3);
-        os_dly_wait(100);
-        bsp_LedToggle(3);
+//        bsp_LedToggle(3);
+//        os_dly_wait(100);
+//        bsp_LedToggle(3);
         //读取网络状态
         wiz_read_buf(PHYCFGR, &data, 1);//读取phy，判断网线是否插好
         if(data & 0x01 == 1)
@@ -580,7 +615,7 @@ __task void AppTaskStart(void)
             g_tNetData.status = e_Link;//网线插好了
             //发送心跳包数据
             data = g_tDoorStatus.doorA.feedBackStatus;
-            data = g_tDoorStatus.doorB.feedBackStatus << 4;
+            data += g_tDoorStatus.doorB.feedBackStatus << 4;
             SendDataToServer(0, 0, &data, 1);//发送心跳包 
         }
         else g_tNetData.status = e_NoLink;//网线没插好
@@ -646,6 +681,14 @@ static void AppObjCreate (void)
     os_mbx_init(&mailboxCardFirst, sizeof(mailboxCardFirst));
     os_mbx_init(&mailboxCardMulti, sizeof(mailboxCardMulti));
     os_mbx_init(&mailboxCardInterLock, sizeof(mailboxCardInterLock));
+}
+
+//报警
+static void ReaderAlarm(enum ReaderOrButton_Enum type)
+{
+    alarmOn(type);
+    os_dly_wait(200);
+    alarmOff(type);
 }
 
 /***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

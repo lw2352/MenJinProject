@@ -57,10 +57,12 @@ void bsp_Init(void)
 	/* 优先级分组设置为4，可配置0-15级抢占式优先级，0级子优先级，即不存在子优先级。*/
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 
+    bsp_InitDWT();//用来做精确微秒延时
+    
 	bsp_InitUart(); 	/* 初始化串口 */
 	bsp_InitLed(); 		/* 初始LED指示灯端口 */
 	bsp_InitKey();		/* 初始化按键 */
-	bsp_InitHardTimer();    /* 硬件定时器初始化*/
+	bsp_InitHardTimer();    /* 硬件定时器初始化*/   
     
     bsp_InitSPIBus();	/* 配置SPI总线 */		
 	bsp_InitSFlash();	/* 初始化SPI 串行Flash */
@@ -77,7 +79,7 @@ void bsp_Init(void)
     GetCPU_ID(g_tParam.netCfg.mcuID, 4);//获取cpuID
     set_default(&g_tParam.netCfg);//设置默认的MAC，IP，GW，SUB，DNS,并初始化
     
-    bsp_InitIwdg(0xC35);//看门狗溢出时间为20s
+    //bsp_InitIwdg(0xC35);//看门狗溢出时间为20s
     
     //状态置0
     g_tRunInfo.firstCardStatus = 0;
