@@ -39,7 +39,7 @@ DoorStatus_T g_tDoorStatus;
 #define GPIO_PIN_LED2	GPIO_Pin_12//out2
 
 #define GPIO_PORT_LED3  GPIOB
-#define GPIO_PIN_LED3	GPIO_Pin_8//sysStatus
+#define GPIO_PIN_LED3	GPIO_Pin_5//sysStatus
 
 #define GPIO_PORT_ALARM  GPIOC
 #define GPIO_PIN_ALARM_LED1	    GPIO_Pin_0
@@ -359,12 +359,12 @@ void alarmOff(enum ReaderOrButton_Enum type)
     switch(type)
     {
         case e_READER_A:
-            GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置低电平
+            //GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置低电平
             GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP1);
             break;
         
         case e_READER_B:
-            GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置低电平
+            //GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置低电平
             GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP2);
             break;
                 
@@ -379,12 +379,12 @@ void alarmOn(enum ReaderOrButton_Enum type)
     switch(type)
     {
         case e_READER_A:
-            GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置高电平
+            //GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置高电平
             GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP1);
             break;
         
         case e_READER_B:
-            GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置高电平
+            //GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置高电平
             GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP2);
             break;
                 

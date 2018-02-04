@@ -28,7 +28,8 @@
 #include "stm32f10x_it.h"
 
 #define ERR_INFO "\r\nEnter HardFault_Handler, System Halt.\r\n"
-
+#define GPIO_PORT_ALARM  GPIOC
+#define GPIO_PIN_ALARM_LED1	    GPIO_Pin_0
 /*
 *********************************************************************************************************
 *	Cortex-M3 内核异常中断服务程序
@@ -71,6 +72,7 @@ void HardFault_Handler(void)
   /* 当硬件失效异常发生时进入死循环 */
   while (1)
   {
+      GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);
   }
 }
 

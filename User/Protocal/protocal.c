@@ -613,10 +613,12 @@ void processCommand(uint8_t *data, uint16_t len)
 //把数据发送到服务器
 void SendDataToServer(uint8_t flag, uint8_t rw, uint8_t *data, uint16_t len)
 {
+    uint8_t ret;
     if(g_tNetData.status == e_Link)
     {
         makeCommmand(flag, rw, data, len);
-        sendto(0, g_tNetData.buf, 10+len+3, g_tParam.netCfg.server_ip, g_tParam.netCfg.server_port);//在断网情况下调用发送会延时
+        ret = sendto(0, g_tNetData.buf, 10+len+3, g_tParam.netCfg.server_ip, g_tParam.netCfg.server_port);//在断网情况下调用发送会延时
+        DEBUG(COM1, &ret, 1);
     }
 }
 

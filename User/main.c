@@ -23,6 +23,8 @@ static void AppObjCreate (void);//用来初始化邮箱和软件定时器
 
 static void ReaderAlarm(enum ReaderOrButton_Enum type);//读头报警
 static void SysLed(void);//系统状态灯闪烁
+static void OpenTips(enum ReaderOrButton_Enum type);//开门提示音
+    
 //任务函数
 __task void AppTaskReader(void);
 
@@ -71,6 +73,8 @@ os_mbx_declare (mailboxCardInterLock, 8);
 OS_ID  OneTimerA;//操作继电器A
 OS_ID  OneTimerB;//操作继电器B
 
+uint8_t FB_data;
+
 /*
 *********************************************************************************************************
 *	函 数 名: main
@@ -81,20 +85,9 @@ OS_ID  OneTimerB;//操作继电器B
 */
 int main(void) 
 {	
-    uint8_t temp[3];
-//    uint8_t in[5] = {0x11, 0x0B, 0x03, 0x0A, 0x06};
 	/* 初始化外设 */
 	bsp_Init();
-	
-    #if 1 
-    temp[0]=0x79;
-    temp[1]=0xA3;
-    temp[2]=0x8E;
-    memcpy(&g_tParam.multipleCardID.generalCardID[0], temp, sizeof(temp));
-    
-    
-    //ds1302_settime(in, 5);
-    #endif
+	//bsp_DelayMS(3000);
     
 	/* 创建启动任务 */
  	os_sys_init_user(AppTaskStart,             /* 任务函数 */
@@ -117,7 +110,7 @@ __task void AppTaskReader(void)
 {
     uint8_t type;
     SingleReader_T *readerMsg;
-    const uint16_t usMaxBlockTime = 200; /* 延迟周期 */
+    const uint16_t usMaxBlockTime = 100; /* 延迟周期 */
     while(1)
     {
         //最重要的部分
@@ -137,7 +130,6 @@ __task void AppTaskReader(void)
         
         if(os_mbx_wait(&mailboxCardRX, (void *)&readerMsg, usMaxBlockTime) != OS_R_TMO)
         {
-            SysLed();
             
             if(g_tParam.systemCfg.multipleOpenCfg[1] == 1)//首卡已启用
             {
@@ -182,8 +174,11 @@ __task void AppTaskReader(void)
                     {
                         if(g_tDoorStatus.doorA.switcherStatus == NC)
                         {
+                            
                             g_tDoorStatus.openDoor(&g_tParam.relation.relationA, e_READER_A);
+                            
                             OneTimerA = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);
+                            OpenTips(e_READER_A);
                             
                             //存储记录到spi
                             storeRecord(readerMsg->ID, e_READER_A);
@@ -205,12 +200,12 @@ __task void AppTaskReader(void)
                     if(type == e_superCardID || type == e_superPasswordID)//超级卡或超级密码随便开
                     {
                         g_tDoorStatus.openDoor(&g_tParam.relation.relationB, e_READER_B);
-                        OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);
+                        OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 2);
                     }
                     if(type == e_threatCardID || type == e_threatPasswordID)//胁迫卡和胁迫码
                     {
                         g_tDoorStatus.openDoor(&g_tParam.relation.relationB, e_READER_B);
-                        OneTimerA = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);
+                        OneTimerA = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 2);
                         
                         //存储记录到spi
                         storeRecord(readerMsg->ID, e_READER_B);
@@ -221,8 +216,11 @@ __task void AppTaskReader(void)
                     {
                         if(g_tDoorStatus.doorB.switcherStatus == NC)
                         {
+                            
                             g_tDoorStatus.openDoor(&g_tParam.relation.relationB, e_READER_B);
-                            OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);
+                            
+                            OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 2);
+                            OpenTips(e_READER_B);
                             
                             //存储记录到spi
                             storeRecord(readerMsg->ID, e_READER_B);
@@ -241,7 +239,10 @@ __task void AppTaskReader(void)
                 default:
                     break;
             }//end of switch
-                
+           
+        //翻转系统状态灯
+        SysLed();
+            
         }//end of if
     }//end of while
 }
@@ -252,7 +253,7 @@ __task void AppTaskFirst(void)
 {
     uint8_t type;
     SingleReader_T *readerMsg;
-    const uint16_t usMaxBlockTime = 200; /* 延迟周期 */
+    const uint16_t usMaxBlockTime = 100; /* 延迟周期 */
     while(1)
     {
         if(os_mbx_wait(&mailboxCardFirst, (void *)&readerMsg, usMaxBlockTime) != OS_R_TMO)
@@ -322,7 +323,7 @@ __task void AppTaskMulti(void)
 {
     uint8_t type;
     SingleReader_T *readerMsg;
-    const uint16_t usMaxBlockTime = 200; /* 延迟周期 */
+    const uint16_t usMaxBlockTime = 100; /* 延迟周期 */
     while(1)
     {
         if(os_mbx_wait(&mailboxCardMulti, (void *)&readerMsg, usMaxBlockTime) != OS_R_TMO)
@@ -391,7 +392,7 @@ __task void AppTaskInterLock(void)
 {
     uint8_t type;
     SingleReader_T *readerMsg;
-    const uint16_t usMaxBlockTime = 200; /* 延迟周期 */
+    const uint16_t usMaxBlockTime = 100; /* 延迟周期 */
     while(1)
     {
         if(os_mbx_wait(&mailboxCardInterLock, (void *)&readerMsg, usMaxBlockTime) != OS_R_TMO)
@@ -493,6 +494,11 @@ __task void AppTaskButton(void)
                 default:
                     break;
             }//end of switch
+            
+            
+        //翻转系统状态灯
+        SysLed();
+            
         }//end of if
     }
 }
@@ -602,6 +608,7 @@ __task void AppTaskNet(void)
 *   间隔时间: 15s
 *********************************************************************************************************
 */
+
 __task void AppTaskStart(void)
 {
     uint8_t data;
@@ -636,13 +643,14 @@ __task void AppTaskStart(void)
         {
             g_tNetData.status = e_Link;//网线插好了
             //发送心跳包数据
-            data = g_tDoorStatus.doorA.feedBackStatus;
-            data += g_tDoorStatus.doorB.feedBackStatus << 4;
-            SendDataToServer(0, 0, &data, 1);//发送心跳包 
+            FB_data = g_tDoorStatus.doorA.feedBackStatus;
+            FB_data += g_tDoorStatus.doorB.feedBackStatus << 4;
+            SendDataToServer(0, 0, &FB_data, 1);//发送心跳包 
+            //SendDataToServer(0x00, 0, g_tReader.readerA.ID, 1);
         }
         else g_tNetData.status = e_NoLink;//网线没插好
         
-        os_dly_wait(15000);
+        os_dly_wait(1000);
     }
 }
 
@@ -708,17 +716,40 @@ static void AppObjCreate (void)
 //报警
 static void ReaderAlarm(enum ReaderOrButton_Enum type)
 {
-    alarmOn(type);
-    os_dly_wait(200);
-    alarmOff(type);
+//    alarmOn(type);
+//    os_dly_wait(500);
+//    alarmOff(type);
 }
 
 //系统状态灯闪烁
 static void SysLed(void)
 {
     bsp_LedToggle(3);
-    os_dly_wait(200);
+    os_dly_wait(500);
     bsp_LedToggle(3);
+}
+
+//开门提示音
+static void OpenTips(enum ReaderOrButton_Enum type)
+{
+//    uint8_t delayTime = 50;
+//    os_dly_wait(200);
+//    
+//    alarmOn(type);
+//    os_dly_wait(delayTime);
+//    alarmOff(type);
+//    
+//    os_dly_wait(delayTime);
+//    
+//    alarmOn(type);
+//    os_dly_wait(delayTime);
+//    alarmOff(type);
+//    
+//    os_dly_wait(delayTime);
+//    
+//    alarmOn(type);
+//    os_dly_wait(delayTime);
+//    alarmOff(type);
 }
 
 /***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

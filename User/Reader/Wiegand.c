@@ -112,7 +112,7 @@ void EXTI0_IRQHandler(void)
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET)
 	{
 		//Data0	-> 低电平表示1位0
-        if(g_tReader.readerA.isDelayTimerOpen == TRUE)
+        if(g_tReader.readerA.isDelayTimerOpen == FALSE)
         {
             OpenWiegandDelayTimerA();
         }
@@ -141,7 +141,7 @@ void EXTI1_IRQHandler(void)
 	if (EXTI_GetITStatus(EXTI_Line1) != RESET)
 	{
 		//Data1 -> 低电平表示1位1
-        if(g_tReader.readerA.isDelayTimerOpen == TRUE)
+        if(g_tReader.readerA.isDelayTimerOpen == FALSE)
         {
             OpenWiegandDelayTimerA();
         }
@@ -170,7 +170,7 @@ void EXTI2_IRQHandler(void)
 	if (EXTI_GetITStatus(EXTI_Line2) != RESET)
 	{
 		//Data0	-> 低电平表示1位0
-        if(g_tReader.readerB.isDelayTimerOpen == TRUE)
+        if(g_tReader.readerB.isDelayTimerOpen == FALSE)
         {
             OpenWiegandDelayTimerB();
         }
@@ -199,7 +199,7 @@ void EXTI3_IRQHandler(void)
 	if (EXTI_GetITStatus(EXTI_Line3) != RESET)
 	{
 		//Data1 -> 低电平表示1位1
-        if(g_tReader.readerB.isDelayTimerOpen == TRUE)
+        if(g_tReader.readerB.isDelayTimerOpen == FALSE)
         {
             OpenWiegandDelayTimerB();
         }
@@ -295,7 +295,7 @@ static void OpenWiegandDelayTimerA(void)
     if(g_tReader.readerA.isDelayTimerOpen == 0)
     {
         g_tReader.readerA.isDelayTimerOpen = 1;
-        bsp_StartHardTimer(1, 100, (void *)HandlDelayTimerA);
+        bsp_StartHardTimer(1, 200, (void *)HandlDelayTimerA);
     }
 }
 
@@ -305,7 +305,7 @@ static void OpenWiegandDelayTimerB(void)
     if(g_tReader.readerB.isDelayTimerOpen == 0)
     {
         g_tReader.readerB.isDelayTimerOpen = 1;
-        bsp_StartHardTimer(2, 100, (void *)HandlDelayTimerB);
+        bsp_StartHardTimer(2, 200, (void *)HandlDelayTimerB);
     }
 }
 
