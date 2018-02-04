@@ -513,7 +513,7 @@ __task void AppTaskButton(void)
 */
 __task void AppTaskNet(void)
 {
-    static uint16_t timesA, timesB;
+    static uint16_t timesA, timesB, n;
     while(1)
     {
         KEY_Scan();//按键检测
@@ -595,7 +595,16 @@ __task void AppTaskNet(void)
             default:
                 break;         
             }//end of switch
+            
+            if(n == 10)
+            {
+                n = 0;
+                FB_data = g_tDoorStatus.doorA.feedBackStatus;
+                FB_data += g_tDoorStatus.doorB.feedBackStatus << 4;
+                SendDataToServer(0, 0, &FB_data, 1);//发送心跳包
+            }
         }
+        n++;
         os_dly_wait(100);
     }
 }
@@ -643,9 +652,9 @@ __task void AppTaskStart(void)
         {
             g_tNetData.status = e_Link;//网线插好了
             //发送心跳包数据
-            FB_data = g_tDoorStatus.doorA.feedBackStatus;
-            FB_data += g_tDoorStatus.doorB.feedBackStatus << 4;
-            SendDataToServer(0, 0, &FB_data, 1);//发送心跳包 
+//            FB_data = g_tDoorStatus.doorA.feedBackStatus;
+//            FB_data += g_tDoorStatus.doorB.feedBackStatus << 4;
+//            SendDataToServer(0, 0, &FB_data, 1);//发送心跳包 
             //SendDataToServer(0x00, 0, g_tReader.readerA.ID, 1);
         }
         else g_tNetData.status = e_NoLink;//网线没插好
