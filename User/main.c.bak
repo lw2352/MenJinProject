@@ -87,7 +87,13 @@ int main(void)
 {	
 	/* 初始化外设 */
 	bsp_Init();
-	//bsp_DelayMS(3000);
+	//test
+    #if 1
+    g_tParam.netCfg.server_ip[0] = 255;
+    g_tParam.netCfg.server_ip[1] = 255;
+    g_tParam.netCfg.server_ip[2] = 255;
+    g_tParam.netCfg.server_ip[3] = 255;
+    #endif
     
 	/* 创建启动任务 */
  	os_sys_init_user(AppTaskStart,             /* 任务函数 */
@@ -604,7 +610,7 @@ __task void AppTaskNet(void)
                 
             case SOCK_CLOSED:// Socket处于关闭状态
                 socket(0, Sn_MR_UDP, g_tParam.netCfg.local_port, 0);	// 打开Socket0，并配置为UDP模式，打开一个本地端口
-                break; 
+                break;
             
             default:
                 break;         
@@ -661,8 +667,8 @@ __task void AppTaskStart(void)
         //翻转系统状态灯
         SysLed();
         //test
-        while(1)
-        {};
+//        while(1)
+//        {};
         os_dly_wait(1000);
     }
 }
