@@ -367,7 +367,7 @@ __task void AppTaskMulti(void)
                         if(g_tDoorStatus.doorA.switcherStatus == NC)
                         {
                             g_tDoorStatus.openDoor(&g_tParam.relation.relationB, e_READER_B);
-                            OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);
+                            OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 2);
                             
                             //存储记录到spi
                             storeRecord(readerMsg->ID, e_READER_B);
@@ -427,7 +427,7 @@ __task void AppTaskInterLock(void)
                         if(g_tDoorStatus.doorA.switcherStatus == NC && g_tDoorStatus.doorB.switcherStatus == NC)
                         {
                             g_tDoorStatus.openDoor(&g_tParam.relation.relationB, e_READER_B);
-                            OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);
+                            OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 2);
                             
                             //存储记录到spi
                             storeRecord(readerMsg->ID, e_READER_B);
@@ -514,6 +514,7 @@ __task void AppTaskButton(void)
 __task void AppTaskNet(void)
 {
     static uint16_t timesA, timesB, n;
+    static uint8_t data;
     while(1)
     {
         KEY_Scan();//按键检测
@@ -566,6 +567,19 @@ __task void AppTaskNet(void)
             }
         }
         
+        //读取网络状态
+        wiz_read_buf(PHYCFGR, &data, 1);//读取phy，判断网线是否插好
+        if(data & 0x01 == 1)
+        {
+            g_tNetData.status = e_Link;//网线插好了
+            //发送心跳包数据
+//            FB_data = g_tDoorStatus.doorA.feedBackStatus;
+//            FB_data += g_tDoorStatus.doorB.feedBackStatus << 4;
+//            SendDataToServer(0, 0, &FB_data, 1);//发送心跳包 
+            //SendDataToServer(0x00, 0, g_tReader.readerA.ID, 1);
+        }
+        else g_tNetData.status = e_NoLink;//网线没插好
+        
         if(g_tNetData.status == e_Link)
         {
             /*Socket状态机，MCU通过读Sn_SR(0)的值进行判断Socket应该处于何种状态*/
@@ -596,15 +610,16 @@ __task void AppTaskNet(void)
                 break;         
             }//end of switch
             
-            if(n == 10)
+            if(n >= 50)//5s
             {
                 n = 0;
                 FB_data = g_tDoorStatus.doorA.feedBackStatus;
                 FB_data += g_tDoorStatus.doorB.feedBackStatus << 4;
                 SendDataToServer(0, 0, &FB_data, 1);//发送心跳包
             }
+            n++;
         }
-        n++;
+        
         os_dly_wait(100);
     }
 }
@@ -620,7 +635,7 @@ __task void AppTaskNet(void)
 
 __task void AppTaskStart(void)
 {
-    uint8_t data;
+    
     /* 获取启动任务的句柄 */
 	HandleTaskStart = os_tsk_self();
     //通过start任务间接地创建其他任务
@@ -645,20 +660,9 @@ __task void AppTaskStart(void)
  
         //翻转系统状态灯
         SysLed();
-        
-        //读取网络状态
-        wiz_read_buf(PHYCFGR, &data, 1);//读取phy，判断网线是否插好
-        if(data & 0x01 == 1)
-        {
-            g_tNetData.status = e_Link;//网线插好了
-            //发送心跳包数据
-            FB_data = g_tDoorStatus.doorA.feedBackStatus;
-            FB_data += g_tDoorStatus.doorB.feedBackStatus << 4;
-            SendDataToServer(0, 0, &FB_data, 1);//发送心跳包 
-            //SendDataToServer(0x00, 0, g_tReader.readerA.ID, 1);
-        }
-        else g_tNetData.status = e_NoLink;//网线没插好
-        
+        //test
+        while(1)
+        {};
         os_dly_wait(1000);
     }
 }

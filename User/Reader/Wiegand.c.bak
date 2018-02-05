@@ -4,7 +4,7 @@ static void OpenWiegandDelayTimerA(void);
 static void HandlDelayTimerA(void);
 static void OpenWiegandDelayTimerB(void);
 static void HandlDelayTimerB(void);
-static void DetectReader(void);
+
 static uint8_t DataCheck(SingleReader_T *reader);
 
 Reader_T g_tReader;
@@ -112,7 +112,7 @@ void EXTI0_IRQHandler(void)
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET)
 	{
 		//Data0	-> 低电平表示1位0
-        if(g_tReader.readerA.isDelayTimerOpen == TRUE)
+        if(g_tReader.readerA.isDelayTimerOpen == FALSE)
         {
             OpenWiegandDelayTimerA();
         }
@@ -141,7 +141,7 @@ void EXTI1_IRQHandler(void)
 	if (EXTI_GetITStatus(EXTI_Line1) != RESET)
 	{
 		//Data1 -> 低电平表示1位1
-        if(g_tReader.readerA.isDelayTimerOpen == TRUE)
+        if(g_tReader.readerA.isDelayTimerOpen == FALSE)
         {
             OpenWiegandDelayTimerA();
         }
@@ -170,7 +170,7 @@ void EXTI2_IRQHandler(void)
 	if (EXTI_GetITStatus(EXTI_Line2) != RESET)
 	{
 		//Data0	-> 低电平表示1位0
-        if(g_tReader.readerB.isDelayTimerOpen == TRUE)
+        if(g_tReader.readerB.isDelayTimerOpen == FALSE)
         {
             OpenWiegandDelayTimerB();
         }
@@ -199,7 +199,7 @@ void EXTI3_IRQHandler(void)
 	if (EXTI_GetITStatus(EXTI_Line3) != RESET)
 	{
 		//Data1 -> 低电平表示1位1
-        if(g_tReader.readerB.isDelayTimerOpen == TRUE)
+        if(g_tReader.readerB.isDelayTimerOpen == FALSE)
         {
             OpenWiegandDelayTimerB();
         }
@@ -224,7 +224,7 @@ void EXTI3_IRQHandler(void)
 
 /***********************************************************
 * 函数名：Check
-* 功能  ：奇偶校验，确定读出数据书否正确 
+* 功能  ：奇偶校验，确定读出数据是否正确 
 * 输入  : 无
 * 输出  ：0->校验成功,数据有效    1->校验失败,数据无效
 **********************************************************/
@@ -322,7 +322,7 @@ static void HandlDelayTimerB(void)
 }
 
 //检测读头是否连接
-static void DetectReader(void)
+void DetectReader(void)
 {
     if((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == 1)\
         && (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) == 1))//读取readerA
