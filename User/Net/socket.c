@@ -298,11 +298,12 @@ uint16 recvfrom(SOCKET s, uint8 * buf, uint16 len, uint8 * addr, uint16 *port)
       case Sn_MR_UDP :
         wiz_read_buf(addrbsb, head, 0x08);        
         ptr += 8;
+      //会使广播地址变为源地址
         // read peer's IP address, port number.
-        addr[0]  = head[0];
+        /*addr[0]  = head[0];
         addr[1]  = head[1];
         addr[2]  = head[2];
-        addr[3]  = head[3];
+        addr[3]  = head[3];*/
         *port    = head[4];
         *port    = (*port << 8) + head[5];
         data_len = head[6];

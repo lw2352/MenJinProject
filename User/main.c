@@ -3,12 +3,12 @@
 *
 *	模块名称 : 主程序模块。
 *	文件名称 : main.c(任务的优先级数值越小优先级越低，这个跟uCOS相反)
-*   AppTaskReader：读头事件处理，优先级7（最高）
+*   AppTaskNet：网络任务、按键扫描，优先级7（最高）
 *   AppTaskFirst：首卡事件处理，优先级6
 *   AppTaskMulti：多重卡事件处理，优先级5
 *   AppTaskInterLock：互锁事件处理，优先级4
 *   AppTaskButton：按键事件处理，优先级3
-*   AppTaskNet：网络任务、按键扫描，优先级2
+*   AppTaskReader：读头事件处理，优先级2
 *   AppTaskStart:心跳包和喂狗等，优先级1（最低）
 *********************************************************************************************************
 */
@@ -108,7 +108,7 @@ int main(void)
 *********************************************************************************************************
 *	函 数 名: AppTaskReader
 *	主要功能: 处理按键开门和远程开门事件
-*   优 先 级: 最高 ,7
+*   优 先 级: 由7改为2
 *   间隔时间: 无
 *********************************************************************************************************
 */
@@ -513,7 +513,7 @@ __task void AppTaskButton(void)
 *********************************************************************************************************
 *	函 数 名: AppTaskNet
 *	功能说明: 网络处理任务，附加按键扫描,读取门吸反馈	
-*   优 先 级: 2  
+*   优 先 级: 由2改为7，避免被打断  
 *   间隔时间: 100ms
 *********************************************************************************************************
 */
@@ -654,7 +654,7 @@ __task void AppTaskStart(void)
         //IWDG_Feed();//喂狗
         
         ds1302_readtime(g_tRunInfo.time, 5);//读取时间
-        DEBUG(COM1, g_tRunInfo.time, 5);
+        //DEBUG(COM1, g_tRunInfo.time, 5);
 
         //判断是否到0点，需要复位首卡或者多重卡的状态
         if(g_tRunInfo.time[3] == 0)
@@ -669,7 +669,7 @@ __task void AppTaskStart(void)
         //test
 //        while(1)
 //        {};
-        os_dly_wait(1000);
+        os_dly_wait(15000);
     }
 }
 
@@ -684,7 +684,7 @@ __task void AppTaskStart(void)
 static void AppTaskCreate (void)
 {
     HandleTaskReader = os_tsk_create_user(AppTaskReader,              /* 任务函数 */ 
-                                       7,                       /* 任务优先级 */ 
+                                       2,                       /* 任务优先级 */ 
                                        &AppTaskReaderStk,          /* 任务栈 */
                                        sizeof(AppTaskReaderStk));  /* 任务栈大小，单位字节数 */
     
@@ -709,7 +709,7 @@ static void AppTaskCreate (void)
 	                                   sizeof(AppTaskButtonStk));  /* 任务栈大小，单位字节数 */
     
 	HandleTaskNet = os_tsk_create_user(AppTaskNet,              /* 任务函数 */ 
-	                                   2,                       /* 任务优先级 */ 
+	                                   7,                       /* 任务优先级 */ 
 	                                   &AppTaskNetStk,          /* 任务栈 */
 	                                   sizeof(AppTaskNetStk));  /* 任务栈大小，单位字节数 */
 }

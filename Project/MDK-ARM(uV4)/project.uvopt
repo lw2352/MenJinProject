@@ -165,25 +165,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>213</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134235648</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\User\Param\param.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\output\../../User/Param/param.c\213</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
           <LineNumber>186</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134222022</Address>
+          <Address>134222014</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -195,11 +179,11 @@
           <Expression>\\output\../../User/Reader/Wiegand.c\186</Expression>
         </Bp>
         <Bp>
-          <Number>2</Number>
+          <Number>1</Number>
           <Type>0</Type>
           <LineNumber>128</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134221842</Address>
+          <Address>134221834</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -211,11 +195,27 @@
           <Expression>\\output\../../User/Reader/Wiegand.c\128</Expression>
         </Bp>
         <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>213</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134235600</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\User\Param\param.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\output\../../User/Param/param.c\213</Expression>
+        </Bp>
+        <Bp>
           <Number>3</Number>
           <Type>0</Type>
           <LineNumber>75</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134222900</Address>
+          <Address>134222892</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -225,22 +225,6 @@
           <Filename>..\..\User\bsp\stm32f10x_it.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\output\../../User/bsp/stm32f10x_it.c\75</Expression>
-        </Bp>
-        <Bp>
-          <Number>4</Number>
-          <Type>0</Type>
-          <LineNumber>98</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134231324</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\User\Protocal\protocal.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\output\../../User/Protocal/protocal.c\98</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -349,10 +333,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>30</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>77</TopLine>
-      <CurrentLine>89</CurrentLine>
+      <TopLine>88</TopLine>
+      <CurrentLine>118</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -367,8 +351,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>140</TopLine>
-      <CurrentLine>152</CurrentLine>
+      <TopLine>151</TopLine>
+      <CurrentLine>181</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\RTX_Conf_CM.c</PathWithFileName>
       <FilenameWithoutPath>RTX_Conf_CM.c</FilenameWithoutPath>
@@ -383,8 +367,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>15</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\main.h</PathWithFileName>
       <FilenameWithoutPath>main.h</FilenameWithoutPath>
@@ -407,8 +391,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>46</TopLine>
+      <CurrentLine>48</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\bsp\bsp.c</PathWithFileName>
       <FilenameWithoutPath>bsp.c</FilenameWithoutPath>
@@ -421,10 +405,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>17</ColumnNumber>
+      <ColumnNumber>19</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>38</TopLine>
+      <CurrentLine>43</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\bsp\bsp.h</PathWithFileName>
       <FilenameWithoutPath>bsp.h</FilenameWithoutPath>
@@ -439,8 +423,8 @@
       <Focus>0</Focus>
       <ColumnNumber>32</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>43</TopLine>
+      <CurrentLine>62</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\bsp\stm32f10x_it.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_it.c</FilenameWithoutPath>
@@ -543,7 +527,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>140</TopLine>
+      <TopLine>143</TopLine>
       <CurrentLine>158</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\Libraries\CMSIS\Device\ST\STM32F10x\Source\Templates\arm\startup_stm32f10x_hd.s</PathWithFileName>
@@ -727,8 +711,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>768</TopLine>
+      <CurrentLine>787</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_spi.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_spi.c</FilenameWithoutPath>
@@ -935,8 +919,8 @@
       <Focus>0</Focus>
       <ColumnNumber>16</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>3</TopLine>
+      <CurrentLine>4</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\RTX\portable\HAL_CM3.c</PathWithFileName>
       <FilenameWithoutPath>HAL_CM3.c</FilenameWithoutPath>
@@ -1007,8 +991,8 @@
       <Focus>0</Focus>
       <ColumnNumber>55</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>28</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\Doc\2.readMe.txt</PathWithFileName>
       <FilenameWithoutPath>2.readMe.txt</FilenameWithoutPath>
@@ -1029,10 +1013,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>9</ColumnNumber>
+      <ColumnNumber>31</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>283</TopLine>
-      <CurrentLine>284</CurrentLine>
+      <TopLine>257</TopLine>
+      <CurrentLine>308</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\Reader\Wiegand.c</PathWithFileName>
       <FilenameWithoutPath>Wiegand.c</FilenameWithoutPath>
@@ -1071,8 +1055,8 @@
       <Focus>0</Focus>
       <ColumnNumber>15</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>44</TopLine>
+      <CurrentLine>59</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\IIC\bsp_eeprom_24xx.c</PathWithFileName>
       <FilenameWithoutPath>bsp_eeprom_24xx.c</FilenameWithoutPath>
@@ -1087,8 +1071,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>28</TopLine>
+      <CurrentLine>60</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\IIC\bsp_eeprom_24xx.h</PathWithFileName>
       <FilenameWithoutPath>bsp_eeprom_24xx.h</FilenameWithoutPath>
@@ -1215,8 +1199,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>14</TopLine>
+      <CurrentLine>37</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\Key\key.c</PathWithFileName>
       <FilenameWithoutPath>key.c</FilenameWithoutPath>
@@ -1255,8 +1239,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>19</TopLine>
-      <CurrentLine>1</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\Net\device.c</PathWithFileName>
       <FilenameWithoutPath>device.c</FilenameWithoutPath>
@@ -1285,10 +1269,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>29</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>279</TopLine>
+      <CurrentLine>306</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\Net\socket.c</PathWithFileName>
       <FilenameWithoutPath>socket.c</FilenameWithoutPath>
@@ -1319,8 +1303,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>34</TopLine>
-      <CurrentLine>75</CurrentLine>
+      <TopLine>42</TopLine>
+      <CurrentLine>73</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\Net\spi2.c</PathWithFileName>
       <FilenameWithoutPath>spi2.c</FilenameWithoutPath>
@@ -1367,8 +1351,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>26</TopLine>
-      <CurrentLine>38</CurrentLine>
+      <TopLine>24</TopLine>
+      <CurrentLine>25</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\Net\w5500.c</PathWithFileName>
       <FilenameWithoutPath>w5500.c</FilenameWithoutPath>
@@ -1407,8 +1391,8 @@
       <Focus>0</Focus>
       <ColumnNumber>14</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>14</TopLine>
+      <CurrentLine>31</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\DS1302\ds1302.c</PathWithFileName>
       <FilenameWithoutPath>ds1302.c</FilenameWithoutPath>
@@ -1487,8 +1471,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>28</TopLine>
+      <CurrentLine>44</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\Led\bsp_led.c</PathWithFileName>
       <FilenameWithoutPath>bsp_led.c</FilenameWithoutPath>
@@ -1525,10 +1509,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>23</ColumnNumber>
+      <ColumnNumber>8</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>85</TopLine>
-      <CurrentLine>99</CurrentLine>
+      <TopLine>587</TopLine>
+      <CurrentLine>620</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\Protocal\protocal.c</PathWithFileName>
       <FilenameWithoutPath>protocal.c</FilenameWithoutPath>
@@ -1607,8 +1591,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>760</TopLine>
+      <CurrentLine>771</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\Uart\bsp_uart_fifo.c</PathWithFileName>
       <FilenameWithoutPath>bsp_uart_fifo.c</FilenameWithoutPath>
@@ -1685,10 +1669,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>16</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>79</TopLine>
+      <CurrentLine>112</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\DWT\bsp_dwt.c</PathWithFileName>
       <FilenameWithoutPath>bsp_dwt.c</FilenameWithoutPath>
@@ -1765,10 +1749,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>16</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>148</TopLine>
-      <CurrentLine>40</CurrentLine>
+      <TopLine>200</TopLine>
+      <CurrentLine>213</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\Param\param.c</PathWithFileName>
       <FilenameWithoutPath>param.c</FilenameWithoutPath>
