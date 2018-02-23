@@ -87,13 +87,7 @@ int main(void)
 {	
 	/* 初始化外设 */
 	bsp_Init();
-	//test
-    #if 0
-    g_tParam.netCfg.server_ip[0] = 255;
-    g_tParam.netCfg.server_ip[1] = 255;
-    g_tParam.netCfg.server_ip[2] = 255;
-    g_tParam.netCfg.server_ip[3] = 255;
-    #endif
+
     
 	/* 创建启动任务 */
  	os_sys_init_user(AppTaskStart,             /* 任务函数 */
@@ -578,11 +572,7 @@ __task void AppTaskNet(void)
         if(data & 0x01 == 1)
         {
             g_tNetData.status = e_Link;//网线插好了
-            //发送心跳包数据
-//            FB_data = g_tDoorStatus.doorA.feedBackStatus;
-//            FB_data += g_tDoorStatus.doorB.feedBackStatus << 4;
-//            SendDataToServer(0, 0, &FB_data, 1);//发送心跳包 
-            //SendDataToServer(0x00, 0, g_tReader.readerA.ID, 1);
+
         }
         else g_tNetData.status = e_NoLink;//网线没插好
         
@@ -616,7 +606,7 @@ __task void AppTaskNet(void)
                 break;         
             }//end of switch
             
-            if(n >= 50)//5s
+            if(n >= 150)//15s
             {
                 n = 0;
                 FB_data = g_tDoorStatus.doorA.feedBackStatus;
@@ -735,9 +725,9 @@ static void AppObjCreate (void)
 //报警
 static void ReaderAlarm(enum ReaderOrButton_Enum type)
 {
-//    alarmOn(type);
-//    os_dly_wait(500);
-//    alarmOff(type);
+    alarmOn(type);
+    os_dly_wait(500);
+    alarmOff(type);
 }
 
 //系统状态灯闪烁

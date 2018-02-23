@@ -79,7 +79,7 @@ void bsp_Init(void)
     GetCPU_ID(g_tParam.netCfg.mcuID, 4);//获取cpuID
     set_default(&g_tParam.netCfg);//设置默认的MAC，IP，GW，SUB，DNS,并初始化
     
-    //bsp_InitIwdg(0xC35);//看门狗溢出时间为20s
+    bsp_InitIwdg(0xC35);//看门狗溢出时间为20s
     
     //状态置0
     g_tRunInfo.firstCardStatus = 0;

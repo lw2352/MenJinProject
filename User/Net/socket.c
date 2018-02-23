@@ -304,8 +304,8 @@ uint16 recvfrom(SOCKET s, uint8 * buf, uint16 len, uint8 * addr, uint16 *port)
         addr[1]  = head[1];
         addr[2]  = head[2];
         addr[3]  = head[3];*/
-        *port    = head[4];
-        *port    = (*port << 8) + head[5];
+        //*port    = head[4];
+        //*port    = (*port << 8) + head[5];
         data_len = head[6];
         data_len = (data_len << 8) + head[7];
 

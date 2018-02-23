@@ -30,7 +30,8 @@ DoorStatus_T g_tDoorStatus;
 */
 
 /* 按键口对应的RCC时钟 */
-#define RCC_FB_LED 	(RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOB)
+//2-23 添加D口时钟
+#define RCC_FB_LED 	(RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOD)
 
 #define GPIO_PORT_LED1  GPIOC
 #define GPIO_PIN_LED1	GPIO_Pin_10//out1
@@ -79,6 +80,7 @@ void bsp_InitLed(void)
 		这是我不希望的，因此在改变GPIO为输出前，先关闭LED指示灯
 	*/
     //初始状态为关闭
+    //继电器不用先关闭，初始化模式后为低电平
 	bsp_LedOff(1);//继电器out1
     g_tDoorStatus.doorA.switcherStatus = NC;
 	bsp_LedOff(2);//继电器out2
@@ -345,7 +347,8 @@ static void readFeedBack(void)
     }
     else g_tDoorStatus.doorA.feedBackStatus = NO;
     
-    if(READ_FB2 == 0)
+    //if(READ_FB2 == 0)
+    if(GPIO_ReadInputDataBit(GPIO_PORT_FB2, GPIO_PIN_FB2) == 0)
     {
         g_tDoorStatus.doorB.feedBackStatus = NC;
     }
@@ -359,12 +362,12 @@ void alarmOff(enum ReaderOrButton_Enum type)
     switch(type)
     {
         case e_READER_A:
-            //GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置低电平
+            GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置低电平
             GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP1);
             break;
         
         case e_READER_B:
-            //GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置低电平
+            GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置低电平
             GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP2);
             break;
                 
@@ -379,12 +382,12 @@ void alarmOn(enum ReaderOrButton_Enum type)
     switch(type)
     {
         case e_READER_A:
-            //GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置高电平
+            GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置高电平
             GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP1);
             break;
         
         case e_READER_B:
-            //GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置高电平
+            GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置高电平
             GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP2);
             break;
                 

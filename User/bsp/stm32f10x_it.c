@@ -72,7 +72,7 @@ void HardFault_Handler(void)
   /* 当硬件失效异常发生时进入死循环 */
   while (1)
   {
-      GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);
+      //GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);
   }
 }
 
