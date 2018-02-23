@@ -519,7 +519,10 @@ void processCommand(uint8_t *data, uint16_t len)
         }
         else if(data[7] == 1)
         {
-            memcpy(&g_tParam.multipleCardID.fingerID[data[10]*300], &data[11], 300);
+            if(data[10] <= 4)
+            {
+                memcpy(&g_tParam.multipleCardID.fingerID[data[10]*300], &data[11], 300);
+            }
             if(data[10] == 4)//0,1,2,3,4
             {
                 //5个包发完
@@ -538,7 +541,10 @@ void processCommand(uint8_t *data, uint16_t len)
         }
         else if(data[7] == 1)
         {
-            memcpy(&g_tParam.multipleCardID.generalCardID[data[10]*300], &data[11], 300);
+            if(data[10] <= 4)
+            {
+                memcpy(&g_tParam.multipleCardID.generalCardID[data[10]*300], &data[11], 300);
+            }
             if(data[10] == 4)//0,1,2,3,4
             {
                 //5个包发完
