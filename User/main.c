@@ -3,13 +3,7 @@
 *
 *	模块名称 : 主程序模块。
 *	文件名称 : main.c(任务的优先级数值越小优先级越低，这个跟uCOS相反)
-*   AppTaskNet：网络任务、按键扫描，优先级7（最高）
-*   AppTaskFirst：首卡事件处理，优先级6
-*   AppTaskMulti：多重卡事件处理，优先级5
-*   AppTaskInterLock：互锁事件处理，优先级4
-*   AppTaskButton：按键事件处理，优先级3
-*   AppTaskReader：读头事件处理，优先级2
-*   AppTaskStart:心跳包和喂狗等，优先级1（最低）
+
 *********************************************************************************************************
 */
 #include "bsp.h"			/* 底层硬件驱动 */
@@ -32,6 +26,7 @@ __task void AppTaskFirst(void);
 __task void AppTaskMulti(void);
 __task void AppTaskInterLock(void);
 
+__task void AppTaskKey(void);
 __task void AppTaskButton(void);
 __task void AppTaskNet(void);
 __task void AppTaskStart(void);
@@ -47,6 +42,7 @@ static uint64_t AppTaskFirstStk[512/8];   /* 任务栈 */
 static uint64_t AppTaskMultiStk[512/8];     /* 任务栈 */
 static uint64_t AppTaskInterLockStk[512/8];   /* 任务栈 */
 
+static uint64_t AppTaskKeyStk[512/8];   /* 任务栈 */
 static uint64_t AppTaskButtonStk[512/8];   /* 任务栈 */
 static uint64_t AppTaskNetStk[512/8];     /* 任务栈 */
 static uint64_t AppTaskStartStk[512/8];   /* 任务栈 */
@@ -58,6 +54,7 @@ OS_TID HandleTaskFirst = NULL;
 OS_TID HandleTaskMulti = NULL;
 OS_TID HandleTaskInterLock = NULL;
 
+OS_TID HandleTaskKey = NULL;
 OS_TID HandleTaskButton = NULL;
 OS_TID HandleTaskNet = NULL;
 OS_TID HandleTaskStart = NULL;
@@ -88,10 +85,16 @@ int main(void)
 	/* 初始化外设 */
 	bsp_Init();
 
+    //启动提示
+    bsp_LedOn(1);
+    bsp_LedOn(2);
+    bsp_DelayMS(100);
+    bsp_LedOff(1);
+    bsp_LedOff(2);
     
 	/* 创建启动任务 */
  	os_sys_init_user(AppTaskStart,             /* 任务函数 */
-	                  1,                        /* 任务优先级 */
+	                  8,                        /* 任务优先级 */
 	                  &AppTaskStartStk,         /* 任务栈 */
 	                  sizeof(AppTaskStartStk)); /* 任务栈大小，单位字节数 */
 	while(1);
@@ -102,8 +105,6 @@ int main(void)
 *********************************************************************************************************
 *	函 数 名: AppTaskReader
 *	主要功能: 处理按键开门和远程开门事件
-*   优 先 级: 由7改为2
-*   间隔时间: 无
 *********************************************************************************************************
 */
 __task void AppTaskReader(void)
@@ -248,7 +249,6 @@ __task void AppTaskReader(void)
 }
 
 //处理首卡的任务
-//优先级：6
 __task void AppTaskFirst(void)
 {
     uint8_t type;
@@ -318,7 +318,6 @@ __task void AppTaskFirst(void)
 }
 
 //处理多重卡的任务
-//优先级：5
 __task void AppTaskMulti(void)
 {
     uint8_t type;
@@ -387,7 +386,6 @@ __task void AppTaskMulti(void)
 
 
 //处理互锁的任务
-//优先级：4
 __task void AppTaskInterLock(void)
 {
     uint8_t type;
@@ -448,8 +446,6 @@ __task void AppTaskInterLock(void)
 *********************************************************************************************************
 *	函 数 名: AppTaskButton
 *	主要功能: 处理按键开门和远程开门事件
-*   优 先 级: 3 
-*   间隔时间: 无
 *********************************************************************************************************
 */
 __task void AppTaskButton(void)
@@ -503,18 +499,10 @@ __task void AppTaskButton(void)
     }
 }
 
-/*
-*********************************************************************************************************
-*	函 数 名: AppTaskNet
-*	功能说明: 网络处理任务，附加按键扫描,读取门吸反馈	
-*   优 先 级: 由2改为7，避免被打断  
-*   间隔时间: 100ms
-*********************************************************************************************************
-*/
-__task void AppTaskNet(void)
+//按键和反馈的扫描任务
+__task void AppTaskKey(void)
 {
-    static uint16_t timesA, timesB, n;
-    static uint8_t data;
+    static uint16_t timesA, timesB;
     while(1)
     {
         KEY_Scan();//按键检测
@@ -567,6 +555,25 @@ __task void AppTaskNet(void)
             }
         }
         
+        os_dly_wait(100);
+        
+    }//end of while
+           
+}
+
+/*
+*********************************************************************************************************
+*	函 数 名: AppTaskNet
+*	功能说明: 网络处理任务，附加按键扫描,读取门吸反馈	
+*********************************************************************************************************
+*/
+__task void AppTaskNet(void)
+{
+    static uint16_t n;
+    static uint8_t data;
+    
+    while(1)
+    {
         //读取网络状态
         wiz_read_buf(PHYCFGR, &data, 1);//读取phy，判断网线是否插好
         if(data & 0x01 == 1)
@@ -606,7 +613,7 @@ __task void AppTaskNet(void)
                 break;         
             }//end of switch
             
-            if(n >= 150)//15s
+            if(n >= 50)//5s测试
             {
                 n = 0;
                 FB_data = g_tDoorStatus.doorA.feedBackStatus;
@@ -616,7 +623,8 @@ __task void AppTaskNet(void)
             n++;
         }
         
-        os_dly_wait(100);
+        /* os_itv_wait是周期性延迟，os_dly_wait是相对延迟。*/
+		os_dly_wait(100);
     }
 }
 
@@ -624,8 +632,6 @@ __task void AppTaskNet(void)
 *********************************************************************************************************
 *	函 数 名: AppTaskStart
 *	主要功能: 进行心跳包和喂狗，读DS1302时间，网络状态
-*   优 先 级: 1 
-*   间隔时间: 15s
 *********************************************************************************************************
 */
 
@@ -641,7 +647,7 @@ __task void AppTaskStart(void)
 	
     while(1)
     {
-        //IWDG_Feed();//喂狗
+        IWDG_Feed();//喂狗
         
         ds1302_readtime(g_tRunInfo.time, 5);//读取时间
         //DEBUG(COM1, g_tRunInfo.time, 5);
@@ -673,13 +679,18 @@ __task void AppTaskStart(void)
 */
 static void AppTaskCreate (void)
 {
+    HandleTaskReader = os_tsk_create_user(AppTaskKey,              /* 任务函数 */ 
+                                       1,                       /* 任务优先级 */ 
+                                       &AppTaskKeyStk,          /* 任务栈 */
+                                       sizeof(AppTaskKeyStk));  /* 任务栈大小，单位字节数 */
+    
     HandleTaskReader = os_tsk_create_user(AppTaskReader,              /* 任务函数 */ 
-                                       2,                       /* 任务优先级 */ 
+                                       6,                       /* 任务优先级 */ 
                                        &AppTaskReaderStk,          /* 任务栈 */
                                        sizeof(AppTaskReaderStk));  /* 任务栈大小，单位字节数 */
     
     HandleTaskFirst = os_tsk_create_user(AppTaskFirst,              /* 任务函数 */ 
-                                       6,                       /* 任务优先级 */ 
+                                       2,                       /* 任务优先级 */ 
                                        &AppTaskFirstStk,          /* 任务栈 */
                                        sizeof(AppTaskFirstStk));  /* 任务栈大小，单位字节数 */
     

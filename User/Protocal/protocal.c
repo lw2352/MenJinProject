@@ -38,6 +38,15 @@ void processCommand(uint8_t *data, uint16_t len)
 {
     uint8_t ret=0;
     //uint8_t temp[512];
+    
+    //响应服务器的广播命令
+    if(data[2] == 0x00)
+    {
+        ret = g_tDoorStatus.doorA.feedBackStatus;
+        ret = g_tDoorStatus.doorB.feedBackStatus << 4;
+        SendDataToServer(data[2], 0, &ret, 1);
+    }
+    
     //先判断ID号
     if(data[0] != 0xA5 || data[1] != 0xA5  || \
        data[3] != g_tParam.netCfg.mcuID[0] || \
@@ -53,11 +62,13 @@ void processCommand(uint8_t *data, uint16_t len)
     switch(data[2])
     {
     
-    case 0x00://心跳包和echo
+    /*
+        *移到上面
+        case 0x00://心跳包和echo
         ret = g_tDoorStatus.doorA.feedBackStatus;
         ret = g_tDoorStatus.doorB.feedBackStatus << 4;
         SendDataToServer(data[2], 0, &ret, 1);
-        break;
+        break;*/
     
     //0x01用来主动上传刷卡的卡号和读头号
     
