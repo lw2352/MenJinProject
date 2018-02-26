@@ -505,7 +505,7 @@ __task void AppTaskKey(void)
     static uint16_t timesA, timesB;
     while(1)
     {
-        KEY_Scan();//按键检测
+        
         DetectReader();//检测读头连接状态
         g_tDoorStatus.readFeedBack();//读取门吸反馈
         //如果门反馈是开的且继电器是关的，那么N秒后调用报警，直到状态对
@@ -574,6 +574,8 @@ __task void AppTaskNet(void)
     
     while(1)
     {
+        
+        KEY_Scan();//按键检测
         //读取网络状态
         wiz_read_buf(PHYCFGR, &data, 1);//读取phy，判断网线是否插好
         if(data & 0x01 == 1)
