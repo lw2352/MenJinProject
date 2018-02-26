@@ -12,6 +12,8 @@
 											函数声明
 **********************************************************************************************************
 */
+#define HEART_TIME 5//心跳包周期为5s
+
 static void AppTaskCreate (void);//创建除start任务外的其他任务
 static void AppObjCreate (void);//用来初始化邮箱和软件定时器
 
@@ -571,6 +573,9 @@ __task void AppTaskNet(void)
 {
     static uint16_t n;
     static uint8_t data;
+    static const uint8_t netDelayTime = 50;//网络任务每50ms一次
+    
+    static uint16_t heartNum = (HEART_TIME*1000)/netDelayTime;//心跳包延时次数
     
     while(1)
     {
@@ -615,7 +620,7 @@ __task void AppTaskNet(void)
                 break;         
             }//end of switch
             
-            if(n >= 50)//5s测试
+            if(n >= heartNum)//等到网络任务达到一定次数后发送心跳包
             {
                 n = 0;
                 FB_data = g_tDoorStatus.doorA.feedBackStatus;
@@ -626,7 +631,7 @@ __task void AppTaskNet(void)
         }
         
         /* os_itv_wait是周期性延迟，os_dly_wait是相对延迟。*/
-		os_dly_wait(100);
+		os_dly_wait(netDelayTime);
     }
 }
 
