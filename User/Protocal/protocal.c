@@ -522,19 +522,19 @@ void processCommand(uint8_t *data, uint16_t len)
         }
         break;
         
-    case 0x1C://指纹ID，数据的第一个字节表示第几包,1+300
+    case 0x1C://指纹ID，第9个字节表示第几包
         if(data[7] == 0)
         {
-            memcpy(&data[11], &g_tParam.multipleCardID.fingerID[data[10]*300], 300);
+            memcpy(&data[10], &g_tParam.multipleCardID.fingerID[data[9]*300], 300);
             SendDataToServer(data[2], 0, &data[10], 301);
         }
         else if(data[7] == 1)
         {
-            if(data[10] <= 4)
+            if(data[9] <= 4)
             {
-                memcpy(&g_tParam.multipleCardID.fingerID[data[10]*300], &data[11], 300);
+                memcpy(&g_tParam.multipleCardID.fingerID[data[9]*300], &data[10], 300);
             }
-            if(data[10] == 4)//0,1,2,3,4
+            if(data[9] == 4)//0,1,2,3,4
             {
                 //5个包发完
                 g_tParam.updateMultipleCardID(g_tParam.multipleCardID.fingerID, 1500, e_fingerID);
@@ -544,19 +544,19 @@ void processCommand(uint8_t *data, uint16_t len)
         }
         break;
         
-    case 0x1D://普通卡，数据的第一个字节表示第几包,1+300
+    case 0x1D://普通卡，第9个字节表示第几包
         if(data[7] == 0)
         {
-            memcpy(&data[11], &g_tParam.multipleCardID.generalCardID[data[10]*300], 300);
+            memcpy(&data[10], &g_tParam.multipleCardID.generalCardID[data[9]*300], 300);
             SendDataToServer(data[2], 0, &data[10], 301);
         }
         else if(data[7] == 1)
         {
-            if(data[10] <= 4)
+            if(data[9] <= 4)
             {
-                memcpy(&g_tParam.multipleCardID.generalCardID[data[10]*300], &data[11], 300);
+                memcpy(&g_tParam.multipleCardID.generalCardID[data[9]*300], &data[10], 300);
             }
-            if(data[10] == 4)//0,1,2,3,4
+            if(data[9] == 4)//0,1,2,3,4
             {
                 //5个包发完
                 g_tParam.updateMultipleCardID(g_tParam.multipleCardID.generalCardID, 1500, e_generalCardID);
@@ -567,7 +567,7 @@ void processCommand(uint8_t *data, uint16_t len)
         break;
         
     case 0x1E://升级文件
-        //length第2位用来表示第几包
+        //length的2位用来表示第几包
         if(data[9] < 64)//spi分配前256k字节,(0--63)
         {
             if(data[9]%4 == 0)

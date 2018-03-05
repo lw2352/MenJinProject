@@ -7,6 +7,9 @@
 *********************************************************************************************************
 */
 
+//TODO:如果waitTime配成0，则不报警
+//需要多包发送的命令，统一复用length的2位表示第几包
+
 #include "bsp.h"			/* 底层硬件驱动 */
 /*
 **********************************************************************************************************
@@ -87,13 +90,6 @@ int main(void)
 {	
 	/* 初始化外设 */
 	bsp_Init();
-
-    //启动提示
-    bsp_LedOn(1);
-    bsp_LedOn(2);
-    bsp_DelayMS(100);
-    bsp_LedOff(1);
-    bsp_LedOff(2);
     
 	/* 创建启动任务 */
  	os_sys_init_user(AppTaskStart,             /* 任务函数 */
@@ -518,8 +514,8 @@ __task void AppTaskKey(void)
             if(g_tDoorStatus.doorA.feedBackStatus == NO && g_tDoorStatus.doorA.switcherStatus == NC)
             {
                 timesA++;
-                
-                if(timesA >= g_tParam.systemCfg.waitTime*10)
+                //TODO:如果waitTime配成0，则不报警
+                if((g_tParam.systemCfg.waitTime!=0) && (timesA >= g_tParam.systemCfg.waitTime*10))
                 {
                     if(timesA == g_tParam.systemCfg.waitTime*10*25)
                     {
@@ -541,7 +537,7 @@ __task void AppTaskKey(void)
             if(g_tDoorStatus.doorB.feedBackStatus == NO && g_tDoorStatus.doorB.switcherStatus == NC)
             {
                 timesB++;
-                if(timesB >= g_tParam.systemCfg.waitTime*10)
+                if((g_tParam.systemCfg.waitTime!=0) && (timesB >= g_tParam.systemCfg.waitTime*10))
                 {
                     if(timesB == g_tParam.systemCfg.waitTime*10*25)
                     {

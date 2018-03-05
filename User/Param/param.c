@@ -132,7 +132,7 @@ void resetParam(void)
     uint16_t i;
     uint8_t buf[EE_PAGE_SIZE];
     uint8_t temp[2]; 
-    uint8_t card[3];    
+    //uint8_t card[3];    
     
     for(i = 0; i < EE_PAGE_SIZE; i++)
 	{
@@ -159,7 +159,7 @@ void resetParam(void)
     g_tParam.netCfg.server_port = 8085;
     
     g_tParam.systemCfg.openTime = 5;
-    g_tParam.systemCfg.waitTime = 10;
+    g_tParam.systemCfg.waitTime = 0;
     memset(g_tParam.systemCfg.multipleOpenCfg, 0, sizeof(g_tParam.systemCfg.multipleOpenCfg));
     
     g_tParam.relation.relationA.reader_switcher = 1;
@@ -203,20 +203,6 @@ void resetParam(void)
     ee_WriteOneBytes(g_tParam.nextStartAddr.nextStartSector[1], NEXT_START_SECTOR_L);
     ee_WriteOneBytes(g_tParam.nextStartAddr.nextStartAddr[0], NEXT_START_ADDR_H);
     ee_WriteOneBytes(g_tParam.nextStartAddr.nextStartAddr[1], NEXT_START_ADDR_L);
-    
-    //i = sizeof(g_tParam.multipleCardID);
-    memset(&g_tParam.multipleCardID, 0xFF, sizeof(g_tParam.multipleCardID));
-    
-    card[0]=0x79;
-    card[1]=0xA3;
-    card[2]=0x8E;
-    memcpy(&g_tParam.multipleCardID.generalCardID[0], card, sizeof(card));
-    
-    card[0]=0x79;
-    card[1]=0x21;
-    card[2]=0x45;
-    memcpy(&g_tParam.multipleCardID.generalCardID[3], card, sizeof(card));
-    g_tParam.updateMultipleCardID(g_tParam.multipleCardID.generalCardID, 1500, e_generalCardID);
     
     //ÖØÐÂÉèÖÃÍøÂç
     set_default(&g_tParam.netCfg);
