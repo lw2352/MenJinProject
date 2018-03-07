@@ -7,9 +7,6 @@
 *********************************************************************************************************
 */
 
-//TODO:如果waitTime配成0，则不报警
-//需要多包发送的命令，统一复用length的2位表示第几包
-
 #include "bsp.h"			/* 底层硬件驱动 */
 /*
 **********************************************************************************************************
@@ -90,6 +87,10 @@ int main(void)
 {	
 	/* 初始化外设 */
 	bsp_Init();
+    
+    //app test
+//    bsp_LedOn(1);
+//    bsp_LedOn(2);
     
 	/* 创建启动任务 */
  	os_sys_init_user(AppTaskStart,             /* 任务函数 */
@@ -599,7 +600,7 @@ __task void AppTaskNet(void)
                 }
                 //数据接收
                 g_tNetData.len = getSn_RX_RSR(0);
-                if((g_tNetData.len>0) && (g_tNetData.len <= (DATA_LEN+8)))
+                if((g_tNetData.len>0) && (g_tNetData.len <= (DATA_LEN+13+8)))
                 { 
                     g_tNetData.len -= 8;//去除8字节长度的ip头信息
                     // W5500接收来自远程上位机的数据，并通过SPI发送给MCU
@@ -654,7 +655,6 @@ __task void AppTaskStart(void)
         IWDG_Feed();//喂狗
         
         ds1302_readtime(g_tRunInfo.time, 5);//读取时间
-        //DEBUG(COM1, g_tRunInfo.time, 5);
 
         //判断是否到0点，需要复位首卡或者多重卡的状态
         if(g_tRunInfo.time[3] == 0)
@@ -666,9 +666,6 @@ __task void AppTaskStart(void)
  
         //翻转系统状态灯
         SysLed();
-        //test
-//        while(1)
-//        {};
         os_dly_wait(15000);
     }
 }

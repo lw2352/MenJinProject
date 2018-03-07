@@ -293,7 +293,7 @@ static void openDoor(SingleRelation_T *singleRelation, enum ReaderOrButton_Enum 
     }  
 }
 
-//根据对应关系关门,还要传入何种开门方式
+//根据对应关系关门,还要传入何种关门方式
 static void closeDoor(SingleRelation_T *singleRelation, enum ReaderOrButton_Enum openWay)
 {
     uint8_t low_a;

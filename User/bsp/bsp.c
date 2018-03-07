@@ -59,7 +59,7 @@ void bsp_Init(void)
 
     bsp_InitDWT();//用来做精确微秒延时
     
-	bsp_InitUart(); 	/* 初始化串口 */
+	//bsp_InitUart(); 	/* 初始化串口 */
 	bsp_InitLed(); 		/* 初始LED指示灯端口 */
 	bsp_InitKey();		/* 初始化按键 */
 	bsp_InitHardTimer();    /* 硬件定时器初始化*/   

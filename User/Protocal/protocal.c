@@ -1,8 +1,16 @@
 #include "bsp.h"
+#define VERSION 0x0E//版本号
 
 void SendDataToServer(uint8_t flag, uint8_t rw, uint8_t *data, uint16_t len);
 
 NetData_T g_tNetData;
+
+//软复位
+void MCU_Reset(void)
+{
+    __disable_fault_irq();      // STM32 软复位  
+    NVIC_SystemReset();
+}
 
 //构造命令格式,把数据写入网络的buf数组中
 void makeCommmand(uint8_t cmdFlag, uint8_t rw, uint8_t *data, uint16_t len)
@@ -185,12 +193,8 @@ void processCommand(uint8_t *data, uint16_t len)
         }
         else if(data[7] == 1)
         {
-            if(data[10]==0)
-            {
-                ret = 0xAA;
-                SendDataToServer(data[2], 1, &ret, 1);
-                return;
-            }
+            //add 3-6
+            //关闭时长为0，表示不检测反馈
             memcpy(&g_tParam.systemCfg.waitTime, &data[10], 1);
             g_tParam.updateSystemCfg(&g_tParam.systemCfg, e_waitTime);
             ret = 0x55;
@@ -568,22 +572,16 @@ void processCommand(uint8_t *data, uint16_t len)
         
     case 0x1E://升级文件
         //length的2位用来表示第几包
-        if(data[9] < 64)//spi分配前256k字节,(0--63)
+        //spi分配前256k字节,(0--255)
+        //ret = data[9];//page num
+        if(data[9]%4 == 0)
         {
-            if(data[9]%4 == 0)
-            {
-                sf_EraseSector(data[9]*1024);//扇区擦除4k字节
-            }
-            sf_PageWrite(&data[10], data[9]*1024, 1024);//按照每包1024字节大小顺序写入spi flash
-            ret = 0x55;
-            SendDataToServer(data[2], 1, &ret, 1);
+            sf_EraseSector(data[9]*1024);//扇区擦除4k字节
         }
-        else
-        {
-            ret = 0xAA;
-            SendDataToServer(data[2], 1, &ret, 1);
-            return;
-        }
+        sf_PageWrite(&data[10], data[9]*1024, 1024);//按照每包1024字节大小顺序写入spi flash
+        ret = 0x55;
+        SendDataToServer(data[2], 1, &ret, 1);
+
         break;
     
     case 0x1F://重置所有参数
@@ -604,7 +602,9 @@ void processCommand(uint8_t *data, uint16_t len)
         //改写升级标志
         ee_WriteOneBytes(1, 0);//1表示需要升级,0表示在iic的首地址
         //关门放狗
-        bsp_DelayMS(25000);//25>20
+        //bsp_DelayMS(25000);//25>20
+        //add 3-7调用系统复位指令   
+        MCU_Reset();
         break;
     
     //0x22作为报警消息
@@ -620,6 +620,11 @@ void processCommand(uint8_t *data, uint16_t len)
             sf_ReadBuffer(&data[10], ((data[8]<<8) + data[9] + 256)*1024, 1024);//读spi的数据
             SendDataToServer(data[2], 0, &data[10], 1024);
         }
+        break;
+        
+    case 0x24://读取版本信息
+        ret=VERSION;
+        SendDataToServer(data[2], 1, &ret, 1);
         break;
                       
     default:
