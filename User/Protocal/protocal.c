@@ -530,7 +530,7 @@ void processCommand(uint8_t *data, uint16_t len)
         if(data[7] == 0)
         {
             memcpy(&data[10], &g_tParam.multipleCardID.fingerID[data[9]*300], 300);
-            SendDataToServer(data[2], 0, &data[10], 301);
+            SendDataToServer(data[2], 0, &data[10], 300);
         }
         else if(data[7] == 1)
         {
@@ -552,7 +552,7 @@ void processCommand(uint8_t *data, uint16_t len)
         if(data[7] == 0)
         {
             memcpy(&data[10], &g_tParam.multipleCardID.generalCardID[data[9]*300], 300);
-            SendDataToServer(data[2], 0, &data[10], 301);
+            SendDataToServer(data[2], 0, &data[10], 300);
         }
         else if(data[7] == 1)
         {
@@ -594,6 +594,8 @@ void processCommand(uint8_t *data, uint16_t len)
         g_tRunInfo.remoteOpen = data[10];//低a高b
         //发送远程开门的事件标志 
         os_evt_set(REMOTE_OPEN_BIT, HandleTaskButton);
+        ret = 0x55;
+        SendDataToServer(data[2], 1, &ret, 1);
         break;
         
     case 0x21://重启（并升级）

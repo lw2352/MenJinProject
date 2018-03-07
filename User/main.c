@@ -334,6 +334,7 @@ __task void AppTaskMulti(void)
                     type = searchID(readerMsg->ID);//searchID函数先读配置，再检测卡号有没有
                     if(type == e_multipleCardID)//首卡
                     {
+                        //TODO:不能直接累加计数
                         g_tRunInfo.multipleCardStatus++;//卡已刷，累加计数
                     }
                     if(g_tRunInfo.multipleCardStatus == (g_tParam.systemCfg.multipleOpenCfg[2]>>4))
