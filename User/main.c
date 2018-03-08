@@ -142,11 +142,14 @@ __task void AppTaskReader(void)
             }
             if(g_tParam.systemCfg.multipleOpenCfg[0] == 1)//互锁已启用
             {
+                g_tRunInfo.isCardUsed = 1;
                 os_mbx_send(&mailboxCardInterLock, readerMsg, 100);//向消息邮箱发数据，如果消息邮箱满了，等待100个时钟节拍
             }
-            //处理超级卡、码和胁迫卡、码
-            switch(readerMsg->readerID)
+            if(!g_tRunInfo.isCardUsed)
             {
+                //处理超级卡、码和胁迫卡、码
+                switch(readerMsg->readerID)
+                {
                 case e_READER_A:                    
                     g_tReader.dataCheck(readerMsg);
                     type = searchID(readerMsg->ID);//searchID函数先读配置，再检测卡号有没有
@@ -159,7 +162,7 @@ __task void AppTaskReader(void)
                         //存储记录到spi
                         storeRecord(readerMsg->ID, e_READER_A);
                         //把卡号上传到服务器
-                        SendDataToServer(0x06, 0, g_tReader.readerA.ID, 3);
+                        SendDataToServer(0x06, e_READER_A, g_tReader.readerA.ID, 3);
                     }
                     if(type == e_threatCardID || type == e_threatPasswordID)//胁迫卡和胁迫码
                     {
@@ -169,7 +172,7 @@ __task void AppTaskReader(void)
                         //存储记录到spi
                         storeRecord(readerMsg->ID, e_READER_A);
                         
-                        SendDataToServer(0x22, 0, g_tReader.readerA.ID, 3);//上传报警消息
+                        SendDataToServer(0x22, e_READER_A, g_tReader.readerA.ID, 3);//上传报警消息
                     }
                     if(type==e_keyBoardID || type==e_generalCardID || type==e_fingerID)
                     {
@@ -184,13 +187,14 @@ __task void AppTaskReader(void)
                             //存储记录到spi
                             storeRecord(readerMsg->ID, e_READER_A);
                             //把卡号上传到服务器
-                            SendDataToServer(0x06, 0, g_tReader.readerA.ID, 3);
+                            //add3-8 读写位0表示A，1表示B
+                            SendDataToServer(0x06, e_READER_A, g_tReader.readerA.ID, 3);
                         }
                     }
                     if(type == 0xFF)
                     {
                         //把卡号上传到服务器
-                        SendDataToServer(0x06, 0, g_tReader.readerA.ID, 3);
+                        SendDataToServer(0x06, e_READER_A, g_tReader.readerA.ID, 3);
                     }
                     break;
                 
@@ -211,7 +215,7 @@ __task void AppTaskReader(void)
                         //存储记录到spi
                         storeRecord(readerMsg->ID, e_READER_B);
                         
-                        SendDataToServer(0x22, 0, g_tReader.readerB.ID, 3);//上传报警消息
+                        SendDataToServer(0x22, e_READER_B, g_tReader.readerB.ID, 3);//上传报警消息
                     }
                     if(type==e_keyBoardID || type==e_generalCardID || type==e_fingerID)
                     {
@@ -220,19 +224,19 @@ __task void AppTaskReader(void)
                             
                             g_tDoorStatus.openDoor(&g_tParam.relation.relationB, e_READER_B);
                             
-                            OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 2);
+                            OneTimerB = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 3);
                             OpenTips(e_READER_B);
                             
                             //存储记录到spi
                             storeRecord(readerMsg->ID, e_READER_B);
                             //把卡号上传到服务器
-                            SendDataToServer(0x06, 0, g_tReader.readerB.ID, 3);
+                            SendDataToServer(0x06, e_READER_B, g_tReader.readerB.ID, 3);
                         }
                     }
                     if(type == 0xFF)
                     {
                         //把卡号上传到服务器
-                        SendDataToServer(0x06, 0, g_tReader.readerB.ID, 3);
+                        SendDataToServer(0x06, e_READER_B, g_tReader.readerB.ID, 3);
                     }
                     break;
                     
@@ -240,6 +244,7 @@ __task void AppTaskReader(void)
                 default:
                     break;
             }//end of switch
+        }//end of if
            
         //翻转系统状态灯
         SysLed();
@@ -476,7 +481,7 @@ __task void AppTaskButton(void)
                     if(g_tDoorStatus.doorA.switcherStatus == NC)
                     {
                         g_tDoorStatus.openDoor(&g_tParam.relation.relationA, e_BUTTON_A);
-                        OneTimerA = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 1);  /* 定时1000*n个系统时钟节拍 ；1是回调函数的参数，可用于区分不同的定时器 */
+                        OneTimerA = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 4);  /* 定时1000*n个系统时钟节拍 ；1是回调函数的参数，可用于区分不同的定时器 */
                     }
                     break;
                 

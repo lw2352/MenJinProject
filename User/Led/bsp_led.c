@@ -274,8 +274,8 @@ static void openDoor(SingleRelation_T *singleRelation, enum ReaderOrButton_Enum 
         
         case e_BUTTON_A:
         case e_BUTTON_B:
-            low_a = singleRelation->reader_switcher & 0x01;//继电器a
-            high_b = (singleRelation->reader_switcher >> 4) & 0x01;//继电器b
+            low_a = singleRelation->button_switcher & 0x01;//继电器a
+            high_b = (singleRelation->button_switcher >> 4) & 0x01;//继电器b
             if(low_a == 1)
             {
                 bsp_LedOn(1);
@@ -318,8 +318,8 @@ static void closeDoor(SingleRelation_T *singleRelation, enum ReaderOrButton_Enum
         
         case e_BUTTON_A:
         case e_BUTTON_B:
-            low_a = singleRelation->reader_switcher & 0x01;//继电器a
-            high_b = (singleRelation->reader_switcher >> 4) & 0x01;//继电器b
+            low_a = singleRelation->button_switcher & 0x01;//继电器a
+            high_b = (singleRelation->button_switcher >> 4) & 0x01;//继电器b
             if(low_a == 1)
             {
                 bsp_LedOff(1);
@@ -362,12 +362,12 @@ void alarmOff(enum ReaderOrButton_Enum type)
     switch(type)
     {
         case e_READER_A:
-            GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置低电平
+            //GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置低电平
             GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP1);
             break;
         
         case e_READER_B:
-            GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置低电平
+            //GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置低电平
             GPIO_ResetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP2);
             break;
                 
@@ -382,12 +382,12 @@ void alarmOn(enum ReaderOrButton_Enum type)
     switch(type)
     {
         case e_READER_A:
-            GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置高电平
+            //GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED1);//置高电平
             GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP1);
             break;
         
         case e_READER_B:
-            GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置高电平
+            //GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_LED2);//置高电平
             GPIO_SetBits(GPIO_PORT_ALARM, GPIO_PIN_ALARM_BEEP2);
             break;
                 

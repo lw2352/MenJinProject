@@ -57,6 +57,7 @@ typedef struct
 //运行时的信息，包括时间，互锁状态，多重卡状态，首卡等状态
 typedef struct
 {
+    uint8_t isCardUsed;//卡号是否已经被其他任务使用
     uint8_t remoteOpen;//远程开门，低4位为1开a门，高4位为1开b门
     uint8_t firstCardStatus;//写1表示首卡已经来了，写0表示必须等待
     uint16_t multipleCardStatus;//表示刷卡数

@@ -191,12 +191,20 @@ void os_tmr_call (U16 info) {
       g_tDoorStatus.closeDoor(&t_remoteOpen, e_BUTTON_A);//e_BUTTON_A和 e_BUTTON_B在closeDoor函数中情况一样，不必区分
       break;
       
-	case 1:          /* 参数为1 ,按键A*/
-      g_tDoorStatus.closeDoor(&g_tParam.relation.relationA, e_BUTTON_A);//e_BUTTON_A和 e_BUTTON_B在closeDoor函数中情况一样，不必区分
+	case 1:          /* 参数为1 ,关系A-读头*/
+      g_tDoorStatus.closeDoor(&g_tParam.relation.relationA, e_READER_A);//e_BUTTON_A和 e_BUTTON_B在closeDoor函数中情况一样，不必区分
       break;
 	
-	case 2:          /* 参数为2，按键B */
-	  g_tDoorStatus.closeDoor(&g_tParam.relation.relationB, e_BUTTON_B);//同上      
+	case 2:          /* 参数为2，关系B-按键 */
+	  g_tDoorStatus.closeDoor(&g_tParam.relation.relationB, e_BUTTON_A);//同上      
+      break;
+    
+    case 3:          /* 参数为3 ,关系B-读头*/
+      g_tDoorStatus.closeDoor(&g_tParam.relation.relationB, e_READER_A);//e_BUTTON_A和 e_BUTTON_B在closeDoor函数中情况一样，不必区分
+      break;
+	
+	case 4:          /* 参数为4，关系A-按键 */
+	  g_tDoorStatus.closeDoor(&g_tParam.relation.relationA, e_BUTTON_A);//同上      
       break;
     
     

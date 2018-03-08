@@ -3,7 +3,7 @@
 
 //事件标志位宏定义
 #define BIT_ALL 0xFF
-#define REMOTE_OPEN_BIT	(1 << 0)
+#define REMOTE_OPEN_BIT	(1 << 3)
 #define BUTTON_A_BIT	(1 << 1)
 #define BUTTON_B_BIT	(1 << 2)
 //#define READER_A_BIT	(1 << 3)

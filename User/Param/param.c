@@ -310,7 +310,7 @@ void updateNextStartAddr(NextStartAddr_T *nextStartAddr)
 void updateMultipleCardID(uint8_t *data, uint16_t len, enum ID_Enum type)
 {
     uint8_t i = 0;
-    uint8_t temp[300]={0};
+    //uint8_t temp[300]={0};
     switch(type)
     {
         case e_firstCardID:
@@ -335,20 +335,24 @@ void updateMultipleCardID(uint8_t *data, uint16_t len, enum ID_Enum type)
             ee_WriteBytes(data, MULTIPLE_CARD_ID, len);
             break;
         case e_generalCardID://len=300
+            len=len/5;
             //一次写300字节，有100个卡号，分5次写入
             for(i=0;i<5;i++)
             {
                 ee_WriteBytes(data, GENERAL_CARD_ID+i*300, len);
+                data += 300;
             }
             //test
-            bsp_DelayMS(100);
-            ee_ReadBytes(temp, GENERAL_CARD_ID, 300);
+            //bsp_DelayMS(100);
+            //ee_ReadBytes(temp, GENERAL_CARD_ID, 300);
             break;
         case e_fingerID://len=300
+            len=len/5;
             //一次写300字节，有100个卡号，分5次写入
             for(i=0;i<5;i++)
             {
                 ee_WriteBytes(data, GENERAL_CARD_ID+i*300, len);
+                data += 300;
             }
             break;
         default:
