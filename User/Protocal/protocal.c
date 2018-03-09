@@ -1,5 +1,5 @@
 #include "bsp.h"
-#define VERSION 0x0E//°æ±¾ºÅ
+#define VERSION 0x0F//°æ±¾ºÅ
 
 void SendDataToServer(uint8_t flag, uint8_t rw, uint8_t *data, uint16_t len);
 

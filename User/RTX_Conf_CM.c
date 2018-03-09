@@ -183,12 +183,15 @@ void os_tmr_call (U16 info) {
       /* 定时器回调函数中仅支持isr_开头的系统函数，os_开头的不支持，此回调函数是在
      滴答定时器中断中执行的。
   */
-  SingleRelation_T t_remoteOpen;
+  
   switch(info)
   {
     case 0:          /* 参数为0,远程开门后关门 */
+    {
+      SingleRelation_T t_remoteOpen;//add3-9 为了能够在case标签后面声明结构体变量，加上了大括号
       t_remoteOpen.button_switcher = g_tRunInfo.remoteOpen;
       g_tDoorStatus.closeDoor(&t_remoteOpen, e_BUTTON_A);//e_BUTTON_A和 e_BUTTON_B在closeDoor函数中情况一样，不必区分
+    }
       break;
       
 	case 1:          /* 参数为1 ,关系A-读头*/

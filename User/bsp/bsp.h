@@ -24,6 +24,8 @@
 //#define BSP_Printf(...)//¹Ø±Õprintf
 #define DEBUG(...)		//comSendBuf//input:(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen)
 
+#define TEST 0
+
 #include "stm32f10x.h"
 #include <stdio.h>
 #include <string.h>

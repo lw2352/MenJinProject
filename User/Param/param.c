@@ -94,13 +94,14 @@ void paramInit(void)
     
     //第二页及以后
     //8个配置开关
-    memcpy(&g_tParam.systemCfg.multipleOpenCfg[0], &temp[IS_OPEN_FIRST_CARD], 1);
-    memcpy(&g_tParam.systemCfg.multipleOpenCfg[1], &temp[IS_OPEN_SUPER_CARD], 1);
-    memcpy(&g_tParam.systemCfg.multipleOpenCfg[2], &temp[IS_OPEN_THREAT_CARD], 1);
-    memcpy(&g_tParam.systemCfg.multipleOpenCfg[3], &temp[IS_OPEN_INTERLOCK], 1);
-    memcpy(&g_tParam.systemCfg.multipleOpenCfg[4], &temp[IS_OPEN_THREAT_PASSWORD], 1);
-    memcpy(&g_tParam.systemCfg.multipleOpenCfg[5], &temp[IS_OPEN_SUPER_PASSWORD], 1);
-    memcpy(&g_tParam.systemCfg.multipleOpenCfg[6], &temp[IS_OPEN_MULTIPLE_CARD], 1);
+    //modify 3-9 顺序修正
+    memcpy(&g_tParam.systemCfg.multipleOpenCfg[0], &temp[IS_OPEN_INTERLOCK], 1);
+    memcpy(&g_tParam.systemCfg.multipleOpenCfg[1], &temp[IS_OPEN_FIRST_CARD], 1);
+    memcpy(&g_tParam.systemCfg.multipleOpenCfg[2], &temp[IS_OPEN_MULTIPLE_CARD], 1);
+    memcpy(&g_tParam.systemCfg.multipleOpenCfg[3], &temp[IS_OPEN_SUPER_CARD], 1);
+    memcpy(&g_tParam.systemCfg.multipleOpenCfg[4], &temp[IS_OPEN_SUPER_PASSWORD], 1);
+    memcpy(&g_tParam.systemCfg.multipleOpenCfg[5], &temp[IS_OPEN_THREAT_CARD], 1);
+    memcpy(&g_tParam.systemCfg.multipleOpenCfg[6], &temp[IS_OPEN_THREAT_PASSWORD], 1);
     memcpy(&g_tParam.systemCfg.multipleOpenCfg[7], &temp[IS_OPEN_FINGER], 1);
     
     //last page
