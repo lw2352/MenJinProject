@@ -1,5 +1,5 @@
 #include "bsp.h"
-#define VERSION 0x0F//版本号
+#define VERSION 0x10//版本号
 
 void SendDataToServer(uint8_t flag, uint8_t rw, uint8_t *data, uint16_t len);
 
@@ -8,8 +8,8 @@ NetData_T g_tNetData;
 //软复位
 void MCU_Reset(void)
 {
-    __disable_fault_irq();      // STM32 软复位  
-    NVIC_SystemReset();
+    __disable_fault_irq();      
+    NVIC_SystemReset();// STM32 软复位
 }
 
 //构造命令格式,把数据写入网络的buf数组中
@@ -591,10 +591,21 @@ void processCommand(uint8_t *data, uint16_t len)
         break;
     
     case 0x20://远程开门,A/B        
-        g_tRunInfo.remoteOpen = data[10];//低a高b
-        //发送远程开门的事件标志 
-        os_evt_set(REMOTE_OPEN_BIT, HandleTaskButton);
-        ret = 0x55;
+        if((data[10]==0x01) && (g_tDoorStatus.doorA.switcherStatus == NC)&& (g_tDoorStatus.doorB.switcherStatus == NC))
+        {           
+            g_tRunInfo.remoteOpen = data[10];//低a高b
+            //发送远程开门的事件标志 
+            os_evt_set(REMOTE_OPEN_BIT, HandleTaskButton);
+            ret = 0x55;
+        }
+        else if((data[10]==0x10) && (g_tDoorStatus.doorA.switcherStatus == NC)&& (g_tDoorStatus.doorB.switcherStatus == NC))
+        {           
+            g_tRunInfo.remoteOpen = data[10];//低a高b
+            //发送远程开门的事件标志 
+            os_evt_set(REMOTE_OPEN_BIT, HandleTaskButton);
+            ret = 0x55;
+        }
+        else ret = 0xAA;
         SendDataToServer(data[2], 1, &ret, 1);
         break;
         

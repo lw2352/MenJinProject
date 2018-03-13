@@ -13,7 +13,7 @@
 											函数声明
 **********************************************************************************************************
 */
-#define HEART_TIME 5//心跳包周期为5s
+#define HEART_TIME 15//心跳包周期为15s
 
 static void AppTaskCreate (void);//创建除start任务外的其他任务
 static void AppObjCreate (void);//用来初始化邮箱和软件定时器
@@ -672,13 +672,10 @@ __task void AppTaskButton(void)
             
             switch(ret_flags)
             {
-                case REMOTE_OPEN_BIT://远程开门,套用按键开门方式
+                case REMOTE_OPEN_BIT://远程开门,套用按键开门方式                   
                     t_remoteOpen.button_switcher = g_tRunInfo.remoteOpen;
-                    if(g_tDoorStatus.doorA.switcherStatus == NC)
-                    {
-                        g_tDoorStatus.openDoor(&t_remoteOpen, e_BUTTON_A);
-                        OneTimerA = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 0);  /* 定时1000*n个系统时钟节拍 ；0是回调函数的参数，可用于区分不同的定时器 */
-                    }
+                    g_tDoorStatus.openDoor(&t_remoteOpen, e_BUTTON_A);
+                    OneTimerA = os_tmr_create(1000 * g_tParam.systemCfg.openTime, 0);  /* 定时1000*n个系统时钟节拍 ；0是回调函数的参数，可用于区分不同的定时器 */
                     break;
                 
                 case BUTTON_A_BIT://按键A
